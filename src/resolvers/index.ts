@@ -1,6 +1,6 @@
 const resolvers = {
   Query: {
-    books: (_: undefined, __: {}) => {
+    posts: (_: undefined, __: {}) => {
       return [];
     },
   },
