@@ -1,9 +1,9 @@
-import { Schema, Model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const userSchema = new Schema({
-  name: String,
-  username: String,
+  fullName: String,
   email: String,
+  username: String,
   password: String,
   bio: String,
   profilePicture: String,
@@ -13,4 +13,4 @@ const userSchema = new Schema({
   gender: String,
 });
 
-export default new Model('User', userSchema);
+export default model('User', userSchema);

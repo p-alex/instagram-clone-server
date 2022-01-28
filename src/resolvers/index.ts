@@ -1,8 +1,8 @@
+import Mutation from './Mutations';
+import Query from './Queries';
+
 const resolvers = {
-  Query: {
-    posts: (_: undefined, __: {}) => {
-      return [];
-    },
-  },
+  Query,
+  Mutation,
 };
 export default resolvers;

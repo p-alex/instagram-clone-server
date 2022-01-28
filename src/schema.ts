@@ -3,7 +3,7 @@ import { gql } from 'apollo-server-express';
 const typeDefs = gql`
   type User {
     id: ID!
-    name: String
+    fullName: String
     username: String!
     email: String!
     password: String!
@@ -40,6 +40,23 @@ const typeDefs = gql`
   }
   type Query {
     posts: [Post]
+  }
+  type RegisterUserResponse {
+    success: Boolean
+    errors: [Error]
+    user: User
+  }
+  type Error {
+    message: String
+  }
+  type Mutation {
+    registerUser(
+      fullName: String!
+      email: String!
+      username: String!
+      password: String!
+      confirmPassword: String!
+    ): RegisterUserResponse
   }
 `;
 
