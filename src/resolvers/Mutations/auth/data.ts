@@ -1,8 +1,25 @@
-import { registerUserType } from '.';
-import { registerUserValidation } from './validators';
+import { loginUserType, registerUserType } from '.';
+import {
+  loginUserValidation,
+  registerUserValidation,
+  validationError,
+} from './validators';
 import bcrypt from 'bcryptjs';
 import User from '../../../models/User';
 import { IUser } from '../../../interfaces';
+import jwt from 'jsonwebtoken';
+
+type registerUserResponse = {
+  success: boolean;
+  errors: validationError[];
+  user: IUser | null;
+};
+
+type loginUserResponse = {
+  success: boolean;
+  errors: validationError[];
+  token: string | null;
+};
 
 export const registerUser = async ({
   fullName,
@@ -10,7 +27,7 @@ export const registerUser = async ({
   username,
   password,
   confirmPassword,
-}: registerUserType) => {
+}: registerUserType): Promise<registerUserResponse> => {
   const { isValid, errors } = await registerUserValidation({
     fullName,
     email,
@@ -44,4 +61,24 @@ export const registerUser = async ({
   }
 
   return { success: isValid, errors, user: null };
+};
+
+export const loginUser = async ({
+  username,
+  email,
+  password,
+}: loginUserType): Promise<loginUserResponse> => {
+  const { isValid, errors, user } = await loginUserValidation({
+    username,
+    email,
+    password,
+  });
+  if (isValid && user) {
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.JWT_SECRET!
+    );
+    return { success: isValid, errors, token };
+  }
+  return { success: isValid, errors, token: null };
 };

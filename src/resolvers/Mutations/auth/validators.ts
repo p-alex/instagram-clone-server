@@ -1,16 +1,25 @@
-import { registerUserType } from '.';
+import { loginUserType, registerUserType } from '.';
 import User from '../../../models/User';
 import { isValidEmail } from '../../../utils/regex';
+import bcrypt from 'bcryptjs';
+import { IUser } from '../../../interfaces';
 
 type registerValidationType = {
   isValid: boolean;
   errors: validationError[];
 };
 
-type validationError = {
+type loginValidationType = {
+  isValid: boolean;
+  errors: validationError[];
+  user: IUser | null;
+};
+
+export type validationError = {
   message: string;
 };
 
+// ------------------------REGISTER VALIDATION------------------------
 export const registerUserValidation = async ({
   fullName,
   email,
@@ -50,4 +59,63 @@ export const registerUserValidation = async ({
   }
 
   return { isValid: errors.length === 0, errors };
+};
+
+// ------------------------LOGIN VALIDATION------------------------
+export const loginUserValidation = async ({
+  username,
+  email,
+  password,
+}: loginUserType): Promise<loginValidationType> => {
+  const errors: validationError[] = [];
+  if (!username && !email) {
+    errors.push({ message: 'Please fill in all fields' });
+    return { isValid: errors.length === 0, errors, user: null };
+  }
+
+  if (!password) {
+    errors.push({ message: 'Please fill in all fields' });
+    return { isValid: errors.length === 0, errors, user: null };
+  }
+
+  if (!username && email && password) {
+    // if login with email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      errors.push({ message: 'Invalid email or password' });
+      return { isValid: errors.length === 0, errors, user: null };
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      if (!errors.find((error) => error.message === 'Invalid email or password')) {
+        errors.push({ message: 'Invalid email or password' });
+      }
+    }
+
+    return { isValid: errors.length === 0, errors, user };
+  }
+
+  if (username && !email && password) {
+    // if login with username
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      errors.push({ message: 'Invalid username or password' });
+      return { isValid: errors.length === 0, errors, user: null };
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      if (!errors.find((error) => error.message === 'Invalid username or password')) {
+        errors.push({ message: 'Invalid username or password' });
+      }
+    }
+
+    return { isValid: errors.length === 0, errors, user };
+  }
+  return { isValid: errors.length === 0, errors, user: null };
 };
