@@ -49,7 +49,10 @@ const typeDefs = gql`
   type LoginUserResponse {
     success: Boolean
     errors: [Error]
-    token: String
+    accessToken: String
+  }
+  type LogoutUserResponse {
+    message: String
   }
   type Error {
     message: String
@@ -63,6 +66,7 @@ const typeDefs = gql`
       confirmPassword: String!
     ): RegisterUserResponse
     loginUser(username: String, email: String, password: String): LoginUserResponse
+    logoutUser(id: ID!): LogoutUserResponse
   }
 `;
 

@@ -8,6 +8,7 @@ import bcrypt from 'bcryptjs';
 import User from '../../../models/User';
 import { IUser } from '../../../interfaces';
 import jwt from 'jsonwebtoken';
+import { Response } from 'express';
 
 type registerUserResponse = {
   success: boolean;
@@ -18,7 +19,7 @@ type registerUserResponse = {
 type loginUserResponse = {
   success: boolean;
   errors: validationError[];
-  token: string | null;
+  accessToken: string | null;
 };
 
 export const registerUser = async ({
@@ -53,6 +54,7 @@ export const registerUser = async ({
       followers: [],
       following: [],
       gender: '',
+      refreshToken: '',
     });
 
     const result: IUser = await newUser.save();
@@ -67,18 +69,45 @@ export const loginUser = async ({
   username,
   email,
   password,
+  res,
 }: loginUserType): Promise<loginUserResponse> => {
   const { isValid, errors, user } = await loginUserValidation({
     username,
     email,
     password,
   });
+
   if (isValid && user) {
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       { id: user.id, username: user.username },
-      process.env.JWT_SECRET!
+      process.env.ACCESS_TOKEN_SECRET!,
+      { expiresIn: '10m' }
     );
-    return { success: isValid, errors, token };
+
+    const refreshToken = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.REFRESH_TOKEN_SECRET!,
+      { expiresIn: '7d' }
+    );
+
+    res!.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      path: '/refresh_token',
+    });
+
+    try {
+      await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken } });
+    } catch (err: any) {
+      errors.push({ message: err.message });
+      return { success: isValid, errors, accessToken: null };
+    }
+    return { success: isValid, errors, accessToken };
   }
-  return { success: isValid, errors, token: null };
+  return { success: isValid, errors, accessToken: null };
+};
+
+export const logoutUser = async ({ id, res }: { id: string; res: Response }) => {
+  res.clearCookie('refreshToken', { path: '/refresh_token' });
+  await User.findByIdAndUpdate({ _id: id }, { $set: { refreshToken: '' } });
+  return { message: 'Logged out!' };
 };

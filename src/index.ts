@@ -5,18 +5,27 @@ import http from 'http';
 import dotenv from 'dotenv';
 import typeDefs from './schema';
 import resolvers from './resolvers/index';
+import cors from 'cors';
 import { DocumentNode } from 'graphql';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import refreshToken from './routes/refreshToken';
 dotenv.config();
 
 const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   const app = express();
+
+  app.use(cors({ origin: 'http://localhost:8080', credentials: true }));
+  app.use(cookieParser());
+
   const httpServer = http.createServer(app);
+
+  app.use('/', refreshToken);
 
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => ({ req }),
+    context: ({ req, res }) => ({ req, res }),
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
@@ -24,6 +33,10 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   server.applyMiddleware({
     app,
     path: '/',
+    cors: {
+      origin: 'http://localhost:8080',
+      credentials: true,
+    },
   });
 
   const port = process.env.PORT || 5000;

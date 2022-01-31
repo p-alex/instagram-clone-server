@@ -10,6 +10,7 @@ export interface IUser {
   followers: string[];
   following: string[];
   gender: string;
+  refreshToken: string;
 }
 export interface IPost {
   id: string;

@@ -11,6 +11,7 @@ const userSchema = new Schema({
   followers: [],
   following: [],
   gender: String,
+  refreshToken: String,
 });
 
 export default model('User', userSchema);
