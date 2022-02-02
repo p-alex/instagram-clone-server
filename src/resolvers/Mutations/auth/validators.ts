@@ -1,8 +1,8 @@
+import { compare } from 'bcryptjs';
 import { loginUserType, registerUserType } from '.';
+import { IUser } from '../../../interfaces';
 import User from '../../../models/User';
 import { isValidEmail } from '../../../utils/regex';
-import bcrypt from 'bcryptjs';
-import { IUser } from '../../../interfaces';
 
 type registerValidationType = {
   isValid: boolean;
@@ -87,7 +87,7 @@ export const loginUserValidation = async ({
       return { isValid: errors.length === 0, errors, user: null };
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await compare(password, user.password);
 
     if (!isValidPassword) {
       if (!errors.find((error) => error.message === 'Invalid email or password')) {
@@ -107,7 +107,7 @@ export const loginUserValidation = async ({
       return { isValid: errors.length === 0, errors, user: null };
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await compare(password, user.password);
 
     if (!isValidPassword) {
       if (!errors.find((error) => error.message === 'Invalid username or password')) {

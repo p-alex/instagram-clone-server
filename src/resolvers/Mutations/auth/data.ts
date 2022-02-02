@@ -7,20 +7,15 @@ import {
 import bcrypt from 'bcryptjs';
 import User from '../../../models/User';
 import { IUser } from '../../../interfaces';
-import jwt from 'jsonwebtoken';
-import { Response } from 'express';
+import jwt, { sign, verify } from 'jsonwebtoken';
+import { Request, Response } from 'express';
+import { isAuth } from './isAuth';
 
-type registerUserResponse = {
+interface IRegisterUserResponse {
   success: boolean;
   errors: validationError[];
   user: IUser | null;
-};
-
-type loginUserResponse = {
-  success: boolean;
-  errors: validationError[];
-  accessToken: string | null;
-};
+}
 
 export const registerUser = async ({
   fullName,
@@ -28,7 +23,7 @@ export const registerUser = async ({
   username,
   password,
   confirmPassword,
-}: registerUserType): Promise<registerUserResponse> => {
+}: registerUserType): Promise<IRegisterUserResponse> => {
   const { isValid, errors } = await registerUserValidation({
     fullName,
     email,
@@ -36,13 +31,11 @@ export const registerUser = async ({
     password,
     confirmPassword,
   });
-
   if (isValid) {
     const hashedPassword = await bcrypt.hash(
       password,
       parseInt(process.env.SALT_ROUNDS!)
     );
-
     const newUser = new User({
       fullName,
       email,
@@ -56,58 +49,130 @@ export const registerUser = async ({
       gender: '',
       refreshToken: '',
     });
-
     const result: IUser = await newUser.save();
-
     return { success: isValid, errors, user: result };
   }
-
   return { success: isValid, errors, user: null };
 };
+
+interface ILoginUserResponse {
+  success: boolean;
+  errors: validationError[];
+  userId: string | null;
+  accessToken: string | null;
+}
 
 export const loginUser = async ({
   username,
   email,
   password,
   res,
-}: loginUserType): Promise<loginUserResponse> => {
+}: loginUserType): Promise<ILoginUserResponse> => {
   const { isValid, errors, user } = await loginUserValidation({
     username,
     email,
     password,
   });
-
   if (isValid && user) {
-    const accessToken = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.ACCESS_TOKEN_SECRET!,
-      { expiresIn: '10m' }
-    );
-
-    const refreshToken = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.REFRESH_TOKEN_SECRET!,
-      { expiresIn: '7d' }
-    );
-
-    res!.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      path: '/refresh_token',
+    const accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
+      expiresIn: '10m',
     });
-
-    try {
-      await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken } });
-    } catch (err: any) {
-      errors.push({ message: err.message });
-      return { success: isValid, errors, accessToken: null };
-    }
-    return { success: isValid, errors, accessToken };
+    const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET!, {
+      expiresIn: '7d',
+    });
+    await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken } });
+    setRefreshTokenCookie(res!, refreshToken);
+    return { success: isValid, errors, userId: user.id!, accessToken };
   }
-  return { success: isValid, errors, accessToken: null };
+  return { success: isValid, errors, userId: null, accessToken: null };
 };
 
-export const logoutUser = async ({ id, res }: { id: string; res: Response }) => {
-  res.clearCookie('refreshToken', { path: '/refresh_token' });
-  await User.findByIdAndUpdate({ _id: id }, { $set: { refreshToken: '' } });
-  return { message: 'Logged out!' };
+interface ILogoutUser {
+  success: boolean;
+  message: string;
+}
+
+export const logoutUser = async (req: Request, res: Response): Promise<ILogoutUser> => {
+  const { authenticated, userId, message } = await isAuth(req);
+  if (authenticated) {
+    await User.findByIdAndUpdate({ _id: userId }, { $set: { refreshToken: '' } });
+    removeRefreshTokenCookie(res);
+    return { success: true, message: 'Logged out!' };
+  }
+  return { success: false, message };
+};
+
+interface IRefreshToken {
+  success: boolean;
+  message: string;
+  userId: string | null;
+  accessToken: string | null;
+}
+
+export const refreshToken = async (
+  req: Request,
+  res: Response
+): Promise<IRefreshToken> => {
+  const token = req.cookies.refreshToken;
+  if (!token)
+    return {
+      success: false,
+      message: 'There is no token in the cookies',
+      userId: null,
+      accessToken: null,
+    };
+  let tokenPayload: { id: string } | undefined;
+  try {
+    tokenPayload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as
+      | { id: string }
+      | undefined;
+  } catch (err) {
+    removeRefreshTokenCookie(res);
+    return { success: false, message: 'Invalid token', userId: null, accessToken: null };
+  }
+  const user: IUser = await User.findById({ _id: tokenPayload!.id });
+  if (!user)
+    return {
+      success: false,
+      message: 'Cannot find user',
+      userId: null,
+      accessToken: null,
+    };
+  if (user.refreshToken !== token) {
+    if (user.refreshToken) {
+      await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken: '' } });
+    }
+    removeRefreshTokenCookie(res);
+    return {
+      success: false,
+      message: 'User does not have the same refresh token',
+      userId: null,
+      accessToken: null,
+    };
+  }
+  const accessToken = sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
+    expiresIn: '10m',
+  });
+  return {
+    success: true,
+    message: 'Sent new access token successfully',
+    userId: user.id!,
+    accessToken,
+  };
+};
+
+const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  });
+};
+
+const removeRefreshTokenCookie = (res: Response) => {
+  res.cookie('refreshToken', '', {
+    httpOnly: true,
+    expires: new Date(0),
+  });
 };

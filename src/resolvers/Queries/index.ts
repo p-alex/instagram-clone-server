@@ -1,3 +1,7 @@
-import posts from './posts';
-const Query = { ...posts };
+import posts from './posts/posts';
+
+const Query = {
+  ...posts,
+};
+
 export default Query;

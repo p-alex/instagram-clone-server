@@ -42,17 +42,25 @@ const typeDefs = gql`
     posts: [Post]
   }
   type RegisterUserResponse {
-    success: Boolean
-    errors: [Error]
+    success: Boolean!
+    errors: [Error]!
     user: User
   }
   type LoginUserResponse {
-    success: Boolean
-    errors: [Error]
+    success: Boolean!
+    errors: [Error]!
+    userId: String
     accessToken: String
   }
   type LogoutUserResponse {
-    message: String
+    success: Boolean!
+    message: String!
+  }
+  type RefreshTokenResponse {
+    success: Boolean!
+    message: String!
+    userId: String
+    accessToken: String
   }
   type Error {
     message: String
@@ -65,8 +73,9 @@ const typeDefs = gql`
       password: String!
       confirmPassword: String!
     ): RegisterUserResponse
-    loginUser(username: String, email: String, password: String): LoginUserResponse
-    logoutUser(id: ID!): LogoutUserResponse
+    loginUser(username: String, email: String, password: String!): LoginUserResponse
+    logoutUser: LogoutUserResponse
+    refreshToken: RefreshTokenResponse
   }
 `;
 

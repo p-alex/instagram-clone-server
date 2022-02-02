@@ -1,5 +1,5 @@
-import { Response } from 'express';
-import { loginUser, logoutUser, registerUser } from './data';
+import { Response, Request } from 'express';
+import { loginUser, logoutUser, refreshToken, registerUser } from './data';
 
 export type registerUserType = {
   email: string;
@@ -18,7 +18,7 @@ export type loginUserType = {
 
 export default {
   registerUser: (
-    _: undefined,
+    _: unknown,
     { fullName, email, username, password, confirmPassword }: registerUserType
   ) => registerUser({ fullName, email, username, password, confirmPassword }),
   loginUser: (
@@ -26,6 +26,11 @@ export default {
     { username, email, password }: loginUserType,
     { res }: { res: Response }
   ) => loginUser({ username, email, password, res }),
-  logoutUser: (_: unknown, { id }: { id: string }, { res }: { res: Response }) =>
-    logoutUser({ id, res }),
+  logoutUser: (_: unknown, __: {}, { req, res }: { req: Request; res: Response }) =>
+    logoutUser(req, res),
+  refreshToken: (
+    _: unknown,
+    { userId }: { userId: string },
+    { req, res }: { req: Request; res: Response }
+  ) => refreshToken(req, res),
 };
