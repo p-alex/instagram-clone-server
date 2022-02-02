@@ -75,10 +75,10 @@ export const loginUser = async ({
   });
   if (isValid && user) {
     const accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
-      expiresIn: '10m',
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
     });
     const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET!, {
-      expiresIn: '7d',
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
     });
     await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken } });
     setRefreshTokenCookie(res!, refreshToken);
@@ -151,7 +151,7 @@ export const refreshToken = async (
     };
   }
   const accessToken = sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: '10m',
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
   });
   return {
     success: true,
