@@ -11,7 +11,7 @@ type registerValidationType = {
 
 type loginValidationType = {
   isValid: boolean;
-  errors: validationError[];
+  message: string;
   user: IUser | null;
 };
 
@@ -27,95 +27,50 @@ export const registerUserValidation = async ({
   password,
   confirmPassword,
 }: registerUserType): Promise<registerValidationType> => {
-  const errors: validationError[] = [];
-
-  if (!fullName || !email || !username || !password || !confirmPassword) {
-    errors.push({ message: 'Please fill in all fields' });
+  let errors: validationError[] = [];
+  try {
+    if (!fullName || !email || !username || !password || !confirmPassword) {
+      errors.push({ message: 'Please fill in all fields' });
+      return { isValid: errors.length === 0, errors };
+    }
+    if (!isValidEmail(email)) {
+      errors.push({ message: 'Invalid email' });
+      return { isValid: errors.length === 0, errors };
+    }
+    const user = await User.findOne({ email });
+    if (user) {
+      errors.push({ message: 'A user with that email already exists' });
+      return { isValid: errors.length === 0, errors };
+    }
+    if (username.length < 6) {
+      errors.push({ message: 'Username must be at least 6 characters long' });
+    }
+    if (password.length < 6) {
+      errors.push({ message: 'Password must be at least 6 characters long' });
+    }
+    if (password !== confirmPassword) {
+      errors.push({ message: 'Passwords must match' });
+    }
     return { isValid: errors.length === 0, errors };
+  } catch (err: any) {
+    errors = [{ message: err.message }];
+    return { isValid: false, errors };
   }
-
-  if (!isValidEmail(email)) {
-    errors.push({ message: 'Invalid email' });
-    return { isValid: errors.length === 0, errors };
-  }
-
-  const user = await User.findOne({ email });
-
-  if (user) {
-    errors.push({ message: 'A user with that email already exists' });
-    return { isValid: errors.length === 0, errors };
-  }
-
-  if (username.length < 6) {
-    errors.push({ message: 'Username must be at least 6 characters long' });
-  }
-
-  if (password.length < 6) {
-    errors.push({ message: 'Password must be at least 6 characters long' });
-  }
-
-  if (password !== confirmPassword) {
-    errors.push({ message: 'Passwords must match' });
-  }
-
-  return { isValid: errors.length === 0, errors };
 };
 
 // ------------------------LOGIN VALIDATION------------------------
 export const loginUserValidation = async ({
   username,
-  email,
   password,
 }: loginUserType): Promise<loginValidationType> => {
-  const errors: validationError[] = [];
-  if (!username && !email) {
-    errors.push({ message: 'Please fill in all fields' });
-    return { isValid: errors.length === 0, errors, user: null };
-  }
-
-  if (!password) {
-    errors.push({ message: 'Please fill in all fields' });
-    return { isValid: errors.length === 0, errors, user: null };
-  }
-
-  if (!username && email && password) {
-    // if login with email
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      errors.push({ message: 'Invalid email or password' });
-      return { isValid: errors.length === 0, errors, user: null };
-    }
-
-    const isValidPassword = await compare(password, user.password);
-
-    if (!isValidPassword) {
-      if (!errors.find((error) => error.message === 'Invalid email or password')) {
-        errors.push({ message: 'Invalid email or password' });
-      }
-    }
-
-    return { isValid: errors.length === 0, errors, user };
-  }
-
-  if (username && !email && password) {
-    // if login with username
+  try {
+    if (!username || !password) throw new Error('Please fill in all fields');
     const user = await User.findOne({ username });
-
-    if (!user) {
-      errors.push({ message: 'Invalid username or password' });
-      return { isValid: errors.length === 0, errors, user: null };
-    }
-
+    if (!user) throw new Error('Invalid username or password');
     const isValidPassword = await compare(password, user.password);
-
-    if (!isValidPassword) {
-      if (!errors.find((error) => error.message === 'Invalid username or password')) {
-        errors.push({ message: 'Invalid username or password' });
-      }
-    }
-
-    return { isValid: errors.length === 0, errors, user };
+    if (!isValidPassword) throw new Error('Invalid username or password');
+    return { isValid: true, message: 'Valid credentials', user };
+  } catch (err: any) {
+    return { isValid: false, message: err.message, user: null };
   }
-  return { isValid: errors.length === 0, errors, user: null };
 };

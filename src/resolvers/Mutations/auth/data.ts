@@ -59,20 +59,18 @@ export const registerUser = async ({
 
 interface ILoginUserResponse {
   success: boolean;
-  errors: validationError[];
+  message: string;
   userId: string | null;
   accessToken: string | null;
 }
 
 export const loginUser = async ({
   username,
-  email,
   password,
   res,
 }: loginUserType): Promise<ILoginUserResponse> => {
-  const { isValid, errors, user } = await loginUserValidation({
+  const { isValid, message, user } = await loginUserValidation({
     username,
-    email,
     password,
   });
   if (isValid && user) {
@@ -83,9 +81,9 @@ export const loginUser = async ({
     );
     await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken } });
     setRefreshTokenCookie(res!, refreshToken);
-    return { success: isValid, errors, userId: user.id!, accessToken };
+    return { success: isValid, message, userId: user.id!, accessToken };
   }
-  return { success: isValid, errors, userId: null, accessToken: null };
+  return { success: isValid, message, userId: null, accessToken: null };
 };
 
 interface ILogoutUser {

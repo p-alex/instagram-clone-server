@@ -3,33 +3,33 @@ import { gql } from 'apollo-server-express';
 const typeDefs = gql`
   type User {
     id: ID!
-    fullName: String
+    fullName: String!
     username: String!
     email: String!
     password: String!
-    bio: String
+    bio: String!
     profilePicture: String!
     posts: [Post]!
-    followers: [String]
-    following: [String]
+    followers: [String]!
+    following: [String]!
     gender: String
   }
   type Post {
     id: ID!
-    user: User
-    images: [Image]!
-    description: String
-    likes: [Like]
-    comments: [Comment]
+    user: User!
+    images: [Image!]!
+    description: String!
+    likes: [Like]!
+    comments: [Comment]!
     postedAt: Int!
   }
   type Comment {
     id: ID!
     isReply: Boolean!
-    user: User
-    comment: String
-    likes: [Like]
-    replies: [Comment]
+    user: User!
+    comment: String!
+    likes: [Like]!
+    replies: [Comment]!
     postedAt: Int!
   }
   type Like {
@@ -39,7 +39,7 @@ const typeDefs = gql`
     url: String!
   }
   type Query {
-    posts: [Post]
+    posts: [Post]!
   }
   type RegisterUserResponse {
     success: Boolean!
@@ -48,7 +48,7 @@ const typeDefs = gql`
   }
   type LoginUserResponse {
     success: Boolean!
-    errors: [Error]!
+    message: String!
     userId: String
     accessToken: String
   }
@@ -73,7 +73,7 @@ const typeDefs = gql`
       password: String!
       confirmPassword: String!
     ): RegisterUserResponse
-    loginUser(username: String, email: String, password: String!): LoginUserResponse
+    loginUser(username: String!, password: String!): LoginUserResponse
     logoutUser: LogoutUserResponse
     refreshToken: RefreshTokenResponse
   }

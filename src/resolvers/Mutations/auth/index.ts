@@ -11,7 +11,6 @@ export type registerUserType = {
 
 export type loginUserType = {
   username: string;
-  email: string;
   password: string;
   res?: Response;
 };
@@ -23,9 +22,9 @@ export default {
   ) => registerUser({ fullName, email, username, password, confirmPassword }),
   loginUser: (
     _: unknown,
-    { username, email, password }: loginUserType,
+    { username, password }: loginUserType,
     { res }: { res: Response }
-  ) => loginUser({ username, email, password, res }),
+  ) => loginUser({ username, password, res }),
   logoutUser: (_: unknown, __: unknown, { req, res }: { req: Request; res: Response }) =>
     logoutUser(req, res),
   refreshToken: (
