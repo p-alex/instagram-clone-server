@@ -7,7 +7,7 @@ import {
 import { hash } from 'bcryptjs';
 import User from '../../../models/User';
 import { IUser } from '../../../interfaces';
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { isAuth } from './isAuth';
 import {
@@ -76,10 +76,7 @@ export const loginUser = async ({
     password,
   });
   if (isValid && user) {
-    const accessToken = createAccessToken(
-      { id: user.id },
-      process.env.ACCESS_TOKEN_EXPIRE!
-    );
+    const accessToken = createAccessToken({ id: user.id });
     const refreshToken = createRefreshToken(
       { id: user.id },
       process.env.REFRESH_TOKEN_EXPIRE!
@@ -120,26 +117,18 @@ export const refreshToken = async (
   try {
     const token = req.cookies.refreshToken;
     if (!token) throw new Error('There is no token in the cookies');
-
     const tokenPayload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as
       | { id: string }
       | undefined;
-
     const user: IUser = await User.findById({ _id: tokenPayload!.id });
     if (!user) throw new Error('There is no user with the id from the token');
-
     if (user.refreshToken !== token) {
       if (user.refreshToken) {
         await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken: '' } });
       }
       throw new Error('User does not have the same refresh token');
     }
-
-    const accessToken = createAccessToken(
-      { id: user.id },
-      process.env.ACCESS_TOKEN_EXPIRE!
-    );
-
+    const accessToken = createAccessToken({ id: user.id });
     return {
       success: true,
       message: 'Sent new access token successfully',

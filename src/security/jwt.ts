@@ -1,11 +1,15 @@
 import { Response } from 'express';
 import { sign } from 'jsonwebtoken';
 
-export const createAccessToken = (payload: object, expiresIn: string): string =>
-  sign(payload, process.env.ACCESS_TOKEN_SECRET!, { expiresIn });
+export const createAccessToken = (payload: object): string =>
+  sign(payload, process.env.ACCESS_TOKEN_SECRET!, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRE!,
+  });
 
 export const createRefreshToken = (payload: object, expiresIn: string): string =>
-  sign(payload, process.env.REFRESH_TOKEN_SECRET!, { expiresIn });
+  sign(payload, process.env.REFRESH_TOKEN_SECRET!, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRE!,
+  });
 
 export const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
   res.cookie('refreshToken', refreshToken, {
