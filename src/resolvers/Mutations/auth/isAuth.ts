@@ -5,25 +5,19 @@ import User from '../../../models/User';
 export const isAuth = async (
   req: Request
 ): Promise<{ authenticated: boolean; userId?: string; message: string }> => {
-  const authorization = req.headers.authorization;
-  if (!authorization) return { authenticated: false, message: 'No Authorization header' };
-  const token = authorization.split(' ')[1];
-  if (!token)
-    return { authenticated: false, message: 'No token in the authorization header' };
-  let tokenPayload;
   try {
-    tokenPayload = verify(token, process.env.ACCESS_TOKEN_SECRET!) as
-      | { id: string }
-      | undefined;
+    const authorization = req.headers.authorization;
+    if (!authorization) throw new Error('No Authorization header');
+    const token = authorization.split(' ')[1];
+    if (!token) throw new Error('No token in the authorization header');
+    const tokenPayload = verify(token, process.env.ACCESS_TOKEN_SECRET!) as {
+      id: string;
+    };
+    if (!tokenPayload) throw new Error('Invalid token');
+    const user = await User.findById({ _id: tokenPayload.id });
+    if (!user) throw new Error("User with the id from the token doesn't exist");
+    return { authenticated: true, userId: tokenPayload.id, message: 'Authenticated' };
   } catch (err: any) {
     return { authenticated: false, message: err.message };
   }
-  if (!tokenPayload) return { authenticated: false, message: 'Invalid token' };
-  const user = await User.findById({ _id: tokenPayload.id });
-  if (!user)
-    return {
-      authenticated: false,
-      message: "User with the id from the token doesn't exist",
-    };
-  return { authenticated: true, userId: tokenPayload.id, message: 'Authenticated' };
 };

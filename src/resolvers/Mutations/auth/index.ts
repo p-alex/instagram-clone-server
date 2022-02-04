@@ -26,11 +26,11 @@ export default {
     { username, email, password }: loginUserType,
     { res }: { res: Response }
   ) => loginUser({ username, email, password, res }),
-  logoutUser: (_: unknown, __: {}, { req, res }: { req: Request; res: Response }) =>
+  logoutUser: (_: unknown, __: unknown, { req, res }: { req: Request; res: Response }) =>
     logoutUser(req, res),
   refreshToken: (
     _: unknown,
-    { userId }: { userId: string },
+    __: unknown,
     { req, res }: { req: Request; res: Response }
   ) => refreshToken(req, res),
 };
