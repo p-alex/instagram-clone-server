@@ -2,11 +2,16 @@ import { compare } from 'bcryptjs';
 import { loginUserType, registerUserType } from '.';
 import { IUser } from '../../../interfaces';
 import User from '../../../models/User';
-import { isValidEmail } from '../../../utils/regex';
+import {
+  isValidEmail,
+  isValidFullname,
+  isValidPassword,
+  isValidUsername,
+} from '../../../utils/regex';
 
 type registerValidationType = {
   isValid: boolean;
-  errors: validationError[];
+  message: string;
 };
 
 type loginValidationType = {
@@ -21,40 +26,27 @@ export type validationError = {
 
 // ------------------------REGISTER VALIDATION------------------------
 export const registerUserValidation = async ({
-  fullName,
+  fullname,
   email,
   username,
   password,
   confirmPassword,
 }: registerUserType): Promise<registerValidationType> => {
-  let errors: validationError[] = [];
   try {
-    if (!fullName || !email || !username || !password || !confirmPassword) {
-      errors.push({ message: 'Please fill in all fields' });
-      return { isValid: errors.length === 0, errors };
-    }
-    if (!isValidEmail(email)) {
-      errors.push({ message: 'Invalid email' });
-      return { isValid: errors.length === 0, errors };
-    }
+    if (!fullname || !email || !username || !password || !confirmPassword)
+      throw new Error('Please fill in all fields');
+    if (!isValidEmail(email)) throw new Error('Invalid email');
     const user = await User.findOne({ email });
-    if (user) {
-      errors.push({ message: 'A user with that email already exists' });
-      return { isValid: errors.length === 0, errors };
-    }
-    if (username.length < 6) {
-      errors.push({ message: 'Username must be at least 6 characters long' });
-    }
-    if (password.length < 6) {
-      errors.push({ message: 'Password must be at least 6 characters long' });
-    }
-    if (password !== confirmPassword) {
-      errors.push({ message: 'Passwords must match' });
-    }
-    return { isValid: errors.length === 0, errors };
+    if (user) throw new Error('A user with that email already exists');
+    const isUniqueUsername = await User.findOne({ username });
+    if (isUniqueUsername) throw new Error('A user with that username already exists');
+    if (!isValidFullname(fullname)) throw new Error('Invalid fullname');
+    if (!isValidUsername(username)) throw new Error('Invalid username');
+    if (!isValidPassword(password)) throw new Error('Invalid password');
+    if (password !== confirmPassword) throw new Error('Passwords must match');
+    return { isValid: true, message: 'Success!' };
   } catch (err: any) {
-    errors = [{ message: err.message }];
-    return { isValid: false, errors };
+    return { isValid: false, message: err.message };
   }
 };
 

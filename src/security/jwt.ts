@@ -6,7 +6,7 @@ export const createAccessToken = (payload: object): string =>
     expiresIn: process.env.ACCESS_TOKEN_EXPIRE!,
   });
 
-export const createRefreshToken = (payload: object, expiresIn: string): string =>
+export const createRefreshToken = (payload: object): string =>
   sign(payload, process.env.REFRESH_TOKEN_SECRET!, {
     expiresIn: process.env.REFRESH_TOKEN_EXPIRE!,
   });

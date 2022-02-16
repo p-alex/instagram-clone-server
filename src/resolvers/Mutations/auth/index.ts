@@ -3,7 +3,7 @@ import { loginUser, logoutUser, refreshToken, registerUser } from './data';
 
 export type registerUserType = {
   email: string;
-  fullName: string;
+  fullname: string;
   username: string;
   password: string;
   confirmPassword: string;
@@ -18,8 +18,8 @@ export type loginUserType = {
 export default {
   registerUser: (
     _: unknown,
-    { fullName, email, username, password, confirmPassword }: registerUserType
-  ) => registerUser({ fullName, email, username, password, confirmPassword }),
+    { email, fullname, username, password, confirmPassword }: registerUserType
+  ) => registerUser({ email, fullname, username, password, confirmPassword }),
   loginUser: (
     _: unknown,
     { username, password }: loginUserType,

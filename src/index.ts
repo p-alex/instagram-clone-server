@@ -15,7 +15,7 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   const app = express();
   app.use(
     cors({
-      origin: ['http://localhost:8080', 'https://studio.apollographql.com'],
+      origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     })
   );
@@ -36,7 +36,7 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   server.applyMiddleware({
     app,
     cors: {
-      origin: ['http://localhost:8080', 'https://studio.apollographql.com'],
+      origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     },
   });

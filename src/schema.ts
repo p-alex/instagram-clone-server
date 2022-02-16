@@ -3,25 +3,25 @@ import { gql } from 'apollo-server-express';
 const typeDefs = gql`
   type User {
     id: ID!
-    fullName: String!
-    username: String!
-    email: String!
-    password: String!
-    bio: String!
-    profilePicture: String!
-    posts: [Post]!
-    followers: [String]!
-    following: [String]!
+    fullname: String
+    username: String
+    email: String
+    password: String
+    bio: String
+    profilePicture: String
+    posts: [Post]
+    followers: [String]
+    following: [String]
     gender: String
   }
   type Post {
-    id: ID!
-    user: User!
-    images: [Image!]!
-    description: String!
-    likes: [Like]!
-    comments: [Comment]!
-    postedAt: Int!
+    id: ID
+    user: User
+    images: [Image]
+    description: String
+    likes: [Like]
+    comments: [Comment]
+    postedAt: Int
   }
   type Comment {
     id: ID!
@@ -39,26 +39,36 @@ const typeDefs = gql`
     url: String!
   }
   type Query {
-    posts: [Post]!
+    getPosts: PostsResponse
+  }
+  type PostsResponse {
+    statusCode: Int
+    success: Boolean
+    message: String
+    posts: [Post]
   }
   type RegisterUserResponse {
+    statusCode: Int
     success: Boolean!
-    errors: [Error]!
+    message: String
     user: User
   }
   type LoginUserResponse {
-    success: Boolean!
-    message: String!
+    statusCode: Int
+    success: Boolean
+    message: String
     userId: String
     accessToken: String
   }
   type LogoutUserResponse {
+    statusCode: Int
     success: Boolean!
     message: String!
   }
   type RefreshTokenResponse {
-    success: Boolean!
-    message: String!
+    statusCode: Int
+    success: Boolean
+    message: String
     userId: String
     accessToken: String
   }
@@ -67,8 +77,8 @@ const typeDefs = gql`
   }
   type Mutation {
     registerUser(
-      fullName: String!
       email: String!
+      fullname: String!
       username: String!
       password: String!
       confirmPassword: String!

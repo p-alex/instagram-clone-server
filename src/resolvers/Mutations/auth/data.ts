@@ -17,20 +17,21 @@ import {
 } from '../../../security/jwt';
 
 interface IRegisterUserResponse {
+  statusCode: number;
   success: boolean;
-  errors: validationError[];
+  message: string;
   user: IUser | null;
 }
 
 export const registerUser = async ({
-  fullName,
+  fullname,
   email,
   username,
   password,
   confirmPassword,
 }: registerUserType): Promise<IRegisterUserResponse> => {
-  const { isValid, errors } = await registerUserValidation({
-    fullName,
+  const { isValid, message } = await registerUserValidation({
+    fullname,
     email,
     username,
     password,
@@ -39,7 +40,7 @@ export const registerUser = async ({
   if (isValid) {
     const hashedPassword = await hash(password, parseInt(process.env.SALT_ROUNDS!));
     const newUser = new User({
-      fullName,
+      fullname,
       email,
       username,
       password: hashedPassword,
@@ -52,12 +53,13 @@ export const registerUser = async ({
       refreshToken: '',
     });
     const result: IUser = await newUser.save();
-    return { success: isValid, errors, user: result };
+    return { statusCode: 201, success: isValid, message, user: result };
   }
-  return { success: isValid, errors, user: null };
+  return { statusCode: 400, success: isValid, message, user: null };
 };
 
 interface ILoginUserResponse {
+  statusCode: number;
   success: boolean;
   message: string;
   userId: string | null;
@@ -75,33 +77,32 @@ export const loginUser = async ({
   });
   if (isValid && user) {
     const accessToken = createAccessToken({ id: user.id });
-    const refreshToken = createRefreshToken(
-      { id: user.id },
-      process.env.REFRESH_TOKEN_EXPIRE!
-    );
+    const refreshToken = createRefreshToken({ id: user.id });
     await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken } });
     setRefreshTokenCookie(res!, refreshToken);
-    return { success: isValid, message, userId: user.id!, accessToken };
+    return { statusCode: 200, success: isValid, message, userId: user.id!, accessToken };
   }
-  return { success: isValid, message, userId: null, accessToken: null };
+  return { statusCode: 401, success: isValid, message, userId: null, accessToken: null };
 };
 
 interface ILogoutUser {
+  statusCode: number;
   success: boolean;
   message: string;
 }
 
 export const logoutUser = async (req: Request, res: Response): Promise<ILogoutUser> => {
-  const { authenticated, userId, message } = await isAuth(req);
-  if (authenticated) {
+  const { isAuthorized, userId, message } = await isAuth(req);
+  if (isAuthorized) {
     await User.findByIdAndUpdate({ _id: userId }, { $set: { refreshToken: '' } });
     res.clearCookie('refreshToken');
-    return { success: true, message: 'Logged out!' };
+    return { statusCode: 200, success: true, message: 'Logged out!' };
   }
-  return { success: false, message };
+  return { statusCode: 401, success: false, message };
 };
 
 interface IRefreshTokenResponse {
+  statusCode: number;
   success: boolean;
   message: string;
   userId: string | null;
@@ -113,29 +114,43 @@ export const refreshToken = async (
   res: Response
 ): Promise<IRefreshTokenResponse> => {
   try {
-    const token = req.cookies.refreshToken;
-    if (!token) throw new Error('There is no token in the cookies');
-    const tokenPayload = verify(token, process.env.REFRESH_TOKEN_SECRET!) as
+    // Check for the refresh token in the cookies
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) throw new Error('There is no token in the cookies');
+    // Verify refresh token
+    const tokenPayload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as
       | { id: string }
       | undefined;
+    // Check if there is a user with the id coming from the refresh token
     const user: IUser = await User.findById({ _id: tokenPayload!.id });
     if (!user) throw new Error('There is no user with the id from the token');
-    if (user.refreshToken !== token) {
+    if (user.refreshToken !== refreshToken) {
       if (user.refreshToken) {
         await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken: '' } });
       }
       throw new Error('User does not have the same refresh token');
     }
-    const accessToken = createAccessToken({ id: user.id });
+    // Return new pair of access and refresh tokens
+    const newAccessToken = createAccessToken({ id: user.id });
+    const newRefreshToken = createRefreshToken({ id: user.id });
+    // Add new refresh token to database
+    await User.findByIdAndUpdate(
+      { _id: user.id },
+      { $set: { refreshToken: newRefreshToken } }
+    );
+    setRefreshTokenCookie(res, newRefreshToken);
     return {
+      statusCode: 200,
       success: true,
       message: 'Sent new access token successfully',
       userId: user.id!,
-      accessToken,
+      accessToken: newAccessToken,
     };
   } catch (err: any) {
+    console.log(err.message);
     res.clearCookie('refreshToken');
     return {
+      statusCode: 401,
       success: false,
       message: err.message,
       userId: null,
