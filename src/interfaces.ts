@@ -12,9 +12,14 @@ export interface IUser {
   gender: string;
   refreshToken?: string;
 }
+export interface IPostUser {
+  id: string;
+  username: string;
+  profilePicture: string;
+}
 export interface IPost {
   id: string;
-  user: IUser;
+  postedBy: IPostUser;
   images: string[];
   description: string;
   likes: string[];

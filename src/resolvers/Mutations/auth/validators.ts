@@ -7,7 +7,7 @@ import {
   isValidFullname,
   isValidPassword,
   isValidUsername,
-} from '../../../utils/regex';
+} from '../../../utils/register-validation';
 
 type registerValidationType = {
   isValid: boolean;

@@ -1,5 +1,8 @@
 import { Response, Request } from 'express';
-import { loginUser, logoutUser, refreshToken, registerUser } from './data';
+import { loginUser } from './controllers/loginController';
+import { logoutUser } from './controllers/logoutController';
+import { refreshToken } from './controllers/refreshTokenContoller';
+import { registerUser } from './controllers/registerController';
 
 export type registerUserType = {
   email: string;

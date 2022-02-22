@@ -14,10 +14,15 @@ const typeDefs = gql`
     following: [String]
     gender: String
   }
+  type PostUser {
+    id: ID!
+    username: String!
+    profilePicture: String!
+  }
   type Post {
     id: ID
-    user: User
-    images: [Image]
+    postedBy: PostUser
+    images: [String]
     description: String
     likes: [Like]
     comments: [Comment]
@@ -34,9 +39,6 @@ const typeDefs = gql`
   }
   type Like {
     userId: ID!
-  }
-  type Image {
-    url: String!
   }
   type Query {
     getPosts: PostsResponse
@@ -58,6 +60,8 @@ const typeDefs = gql`
     success: Boolean
     message: String
     userId: String
+    username: String
+    profileImg: String
     accessToken: String
   }
   type LogoutUserResponse {
@@ -70,10 +74,23 @@ const typeDefs = gql`
     success: Boolean
     message: String
     userId: String
+    username: String
+    profileImg: String
     accessToken: String
   }
   type Error {
     message: String
+  }
+  type CreatePostResponse {
+    statusCode: Int
+    success: Boolean
+    message: String
+    post: Post
+  }
+  input CreatePostUser {
+    id: ID!
+    username: String!
+    profilePicture: String
   }
   type Mutation {
     registerUser(
@@ -86,6 +103,7 @@ const typeDefs = gql`
     loginUser(username: String!, password: String!): LoginUserResponse
     logoutUser: LogoutUserResponse
     refreshToken: RefreshTokenResponse
+    createPost(user: CreatePostUser, caption: String, image: String!): CreatePostResponse
   }
 `;
 

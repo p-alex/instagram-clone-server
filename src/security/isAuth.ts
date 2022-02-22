@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { verify } from 'jsonwebtoken';
-import User from '../../../models/User';
+import User from '../models/User';
 import { ForbiddenError } from 'apollo-server-core';
 
 export const isAuth = async (

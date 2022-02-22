@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { isAuth } from '../../Mutations/auth/isAuth';
+import { isAuth } from '../../../security/isAuth';
 
 export const getPosts = async (req: Request) => {
   const { isAuthorized, userId, message } = await isAuth(req);

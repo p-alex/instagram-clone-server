@@ -13,12 +13,16 @@ import cookieParser from 'cookie-parser';
 
 const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   const app = express();
+
   app.use(
     cors({
       origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     })
   );
+
+  app.use(express.json({ limit: '800kb' }));
+  app.use(express.urlencoded({ limit: '800kb', extended: true }));
 
   app.use(cookieParser());
 
