@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { ICreatePostBody } from '..';
-import { IPost, IUser } from '../../../../interfaces';
+import { IPost } from '../../../../interfaces';
 import { isAuth } from '../../../../security/isAuth';
 import { cloudinary } from '../../../../utils/cloudinary';
 import 'dotenv/config';
@@ -15,7 +15,7 @@ interface ICreatePostResponse {
 }
 
 export const createPost = async (
-  { user, image, caption }: ICreatePostBody,
+  { image, caption }: ICreatePostBody,
   req: Request
 ): Promise<ICreatePostResponse> => {
   const { isAuthorized, message, userId } = await isAuth(req);
@@ -29,7 +29,7 @@ export const createPost = async (
       // Add post to database
       const currentDate = Date.now();
       const newPost = new Post({
-        postedBy: user,
+        userId,
         images: [secureImageUrl],
         description: caption,
         likes: [],
@@ -37,15 +37,14 @@ export const createPost = async (
         postedAt: currentDate,
       });
       const post = await newPost.save();
-      console.log(post);
       if (post?.postedAt) {
-        const userWhoPosted = await User.findById({ _id: user.id });
+        const userWhoPosted = await User.findById({ _id: userId });
         if (userWhoPosted?.id) {
           const oldPosts = userWhoPosted.posts;
           const newPosts = [
             {
               id: post.id,
-              postedBy: user,
+              userId,
               images: [secureImageUrl],
               description: caption,
               likes: [],

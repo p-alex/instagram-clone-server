@@ -14,19 +14,14 @@ const typeDefs = gql`
     following: [String]
     gender: String
   }
-  type PostUser {
-    id: ID!
-    username: String!
-    profilePicture: String!
-  }
   type Post {
     id: ID
-    postedBy: PostUser
+    userId: String!
     images: [String]
     description: String
     likes: [Like]
     comments: [Comment]
-    postedAt: Int
+    postedAt: Int!
   }
   type Comment {
     id: ID!
@@ -103,7 +98,7 @@ const typeDefs = gql`
     loginUser(username: String!, password: String!): LoginUserResponse
     logoutUser: LogoutUserResponse
     refreshToken: RefreshTokenResponse
-    createPost(user: CreatePostUser, caption: String, image: String!): CreatePostResponse
+    createPost(caption: String, image: String!): CreatePostResponse
   }
 `;
 
