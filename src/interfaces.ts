@@ -6,10 +6,11 @@ export interface IUser {
   password: string;
   bio: string;
   profilePicture: string;
-  posts: IPost[];
-  followers: string[];
-  following: string[];
+  posts: IPosts;
+  followers: IFollowers;
+  following: IFollowing;
   gender: string;
+  joinedAt: string;
   refreshToken?: string;
 }
 export interface IPostUser {
@@ -17,21 +18,46 @@ export interface IPostUser {
   username: string;
   profilePicture: string;
 }
+export interface IPosts {
+  count: number;
+  postsList: string[];
+}
 export interface IPost {
   id: string;
-  postedBy: IPostUser;
+  user: IPostUser;
   images: string[];
   description: string;
-  likes: string[];
-  comments: Comment[];
-  postedAt: number;
+  likes: ILikes;
+  comments: IComments;
+  postedAt: string;
+}
+export interface IComments {
+  count: number;
+  commentsList: [string];
 }
 export interface IComment {
   id: string;
   isReply: boolean;
-  user: IUser;
+  user: ICommentCreator;
   comment: string;
   likes: string[];
   replies: Comment[];
-  postedAt: number;
+  postedAt: string;
+}
+export interface ICommentCreator {
+  id: string;
+  username: string;
+  profilePicture: string;
+}
+export interface ILikes {
+  count: number;
+  users: [string];
+}
+export interface IFollowers {
+  count: number;
+  followersList: [string];
+}
+export interface IFollowing {
+  count: number;
+  followingList: [string];
 }

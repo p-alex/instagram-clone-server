@@ -32,13 +32,6 @@ export const registerUser = async ({
       email,
       username,
       password: hashedPassword,
-      bio: '',
-      profilePicture: '',
-      posts: [],
-      followers: [],
-      following: [],
-      gender: '',
-      refreshToken: '',
     });
     const result: IUser = await newUser.save();
     return { statusCode: 201, success: isValid, message, user: result };

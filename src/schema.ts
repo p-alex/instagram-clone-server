@@ -3,37 +3,65 @@ import { gql } from 'apollo-server-express';
 const typeDefs = gql`
   type User {
     id: ID!
-    fullname: String
-    username: String
-    email: String
-    password: String
+    fullname: String!
+    username: String!
+    email: String!
+    password: String!
     bio: String
     profilePicture: String
-    posts: [Post]
-    followers: [String]
-    following: [String]
+    posts: Posts
+    followers: Followers
+    following: Following
     gender: String
+    joinedAt: String
+  }
+  type Followers {
+    count: Int!
+    followersList: [String]
+  }
+  type Following {
+    count: Int!
+    followingList: [String]
+  }
+  type Posts {
+    count: Int!
+    postsList: [Post]
   }
   type Post {
     id: ID
-    userId: String!
+    user: PostCreator
     images: [String]
     description: String
-    likes: [Like]
-    comments: [Comment]
+    likes: Likes
+    comments: Comments
     postedAt: Int!
+  }
+  type PostCreator {
+    id: ID
+    username: String
+    profilePicture: String
+  }
+  type Comments {
+    count: Int!
+    comments: [Comment]
   }
   type Comment {
     id: ID!
     isReply: Boolean!
-    user: User!
+    user: CommentCreator!
     comment: String!
-    likes: [Like]!
+    likes: Likes
     replies: [Comment]!
     postedAt: Int!
   }
-  type Like {
-    userId: ID!
+  type CommentCreator {
+    id: ID
+    username: String
+    profilePicture: String
+  }
+  type Likes {
+    count: Int!
+    users: [String]
   }
   type Query {
     getPosts: PostsResponse

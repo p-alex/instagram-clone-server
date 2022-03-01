@@ -1,17 +1,17 @@
 import { Request } from 'express';
 import { ICreatePostBody } from '..';
-import { IPost } from '../../../../interfaces';
+import { IPost, IUser } from '../../../../interfaces';
 import { isAuth } from '../../../../security/isAuth';
 import { cloudinary } from '../../../../utils/cloudinary';
 import 'dotenv/config';
 import Post from '../../../../models/Post';
 import User from '../../../../models/User';
+import { HydratedDocument } from 'mongoose';
 
 interface ICreatePostResponse {
   statusCode: number;
   success: boolean;
   message: string;
-  post: IPost | null;
 }
 
 export const createPost = async (
@@ -29,38 +29,28 @@ export const createPost = async (
       // Add post to database
       const currentDate = Date.now();
       const newPost = new Post({
-        userId,
+        user: userId,
         images: [secureImageUrl],
         description: caption,
-        likes: [],
-        comments: [],
-        postedAt: currentDate,
+        likes: { count: 0, users: [] },
+        comments: { count: 0, userComments: [] },
       });
-      const post = await newPost.save();
+      const post: IPost = await newPost.save();
       if (post?.postedAt) {
-        const userWhoPosted = await User.findById({ _id: userId });
-        if (userWhoPosted?.id) {
-          const oldPosts = userWhoPosted.posts;
-          const newPosts = [
-            {
-              id: post.id,
-              userId,
-              images: [secureImageUrl],
-              description: caption,
-              likes: [],
-              comments: [],
-              postedAt: currentDate,
-            },
-            ...oldPosts,
-          ];
-          userWhoPosted.posts = newPosts;
-          const updatedUser = await userWhoPosted.save();
+        const user: HydratedDocument<IUser> = await User.findById({ _id: userId });
+        if (user?.id) {
+          const oldPosts = user.posts;
+          const newPosts: { count: number; postsList: string[] } = {
+            count: oldPosts.count + 1,
+            postsList: [post.id!, ...oldPosts.postsList],
+          };
+          user.posts = newPosts;
+          const updatedUser = await user.save();
           if (updatedUser.username) {
             return {
               statusCode: 201,
               success: true,
               message: 'Post created successfully',
-              post,
             };
           }
         }
@@ -69,7 +59,6 @@ export const createPost = async (
           statusCode: 500,
           success: false,
           message: 'Something went wrong',
-          post,
         };
       }
     } catch (error: any) {
@@ -78,9 +67,8 @@ export const createPost = async (
         statusCode: 500,
         success: false,
         message: 'Something went wrong',
-        post: null,
       };
     }
   }
-  return { statusCode: 401, success: false, message: 'Unauthorized', post: null };
+  return { statusCode: 401, success: false, message: 'Unauthorized' };
 };
