@@ -16,7 +16,11 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
 
   app.use(
     cors({
-      origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
+      origin: [
+        'http://localhost:3000',
+        'https://studio.apollographql.com',
+        'https://infallible-kilby-bdcfb0.netlify.app',
+      ],
       credentials: true,
     })
   );
@@ -40,7 +44,11 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   server.applyMiddleware({
     app,
     cors: {
-      origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
+      origin: [
+        'http://localhost:3000',
+        'https://studio.apollographql.com',
+        'https://infallible-kilby-bdcfb0.netlify.app',
+      ],
       credentials: true,
     },
   });
