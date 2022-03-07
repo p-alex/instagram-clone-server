@@ -5,7 +5,12 @@ import { ForbiddenError } from 'apollo-server-core';
 
 export const isAuth = async (
   req: Request
-): Promise<{ isAuthorized: boolean; userId?: string; message: string }> => {
+): Promise<{
+  isAuthorized: boolean;
+  userId?: string;
+  user?: { id: string; username: string; profilePicture: string };
+  message: string;
+}> => {
   try {
     const isAuthorized = req.headers.authorization;
     if (!isAuthorized) throw new ForbiddenError('No Authorization header');
@@ -17,7 +22,12 @@ export const isAuth = async (
     if (!tokenPayload) throw new ForbiddenError('Invalid token');
     const user = await User.findById({ _id: tokenPayload.id });
     if (!user) throw new ForbiddenError("User with the id from the token doesn't exist");
-    return { isAuthorized: true, userId: tokenPayload.id, message: 'Authenticated' };
+    return {
+      isAuthorized: true,
+      userId: tokenPayload.id,
+      message: 'Authenticated',
+      user,
+    };
   } catch (err: any) {
     return { isAuthorized: false, message: err.message };
   }

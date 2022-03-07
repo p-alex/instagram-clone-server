@@ -1,6 +1,6 @@
 export interface IUser {
-  id?: string;
-  fullName: string;
+  id: string;
+  fullname: string;
   username: string;
   email: string;
   password: string;
@@ -13,6 +13,16 @@ export interface IUser {
   joinedAt: string;
   refreshToken?: string;
 }
+export interface IUserProfileInfo {
+  userId: string;
+  profilePicture: string;
+  fullname: string;
+  username: string;
+  bio: string;
+  followers: IFollowers;
+  following: IFollowing;
+  posts: IPosts;
+}
 export interface IPostUser {
   id: string;
   username: string;
@@ -20,16 +30,20 @@ export interface IPostUser {
 }
 export interface IPosts {
   count: number;
-  postsList: string[];
+  postsList: IPost[];
 }
 export interface IPost {
   id: string;
   user: IPostUser;
-  images: string[];
+  images: IImage[];
   description: string;
   likes: ILikes;
   comments: IComments;
   postedAt: string;
+}
+export interface IImage {
+  fullImage: string;
+  croppedImage: string;
 }
 export interface IComments {
   count: number;

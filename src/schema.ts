@@ -30,11 +30,15 @@ const typeDefs = gql`
   type Post {
     id: ID
     user: PostCreator
-    images: [String]
+    images: [Image]
     description: String
     likes: Likes
     comments: Comments
-    postedAt: Int!
+    postedAt: String!
+  }
+  type Image {
+    fullImage: String
+    croppedImage: String
   }
   type PostCreator {
     id: ID
@@ -63,10 +67,23 @@ const typeDefs = gql`
     count: Int!
     users: [String]
   }
-  type Query {
-    getPosts: PostsResponse
+  type GetUserResponse {
+    statusCode: Int
+    success: Boolean
+    message: String
+    user: UserProfileInfo
   }
-  type PostsResponse {
+  type UserProfileInfo {
+    userId: ID
+    profilePicture: String
+    fullname: String
+    username: String
+    bio: String
+    followers: Followers
+    following: Following
+    posts: Posts
+  }
+  type GetPostsResponse {
     statusCode: Int
     success: Boolean
     message: String
@@ -114,6 +131,17 @@ const typeDefs = gql`
     id: ID!
     username: String!
     profilePicture: String
+  }
+  type GetPostResponse {
+    statusCode: Int
+    success: Boolean
+    message: String
+    post: Post
+  }
+  type Query {
+    getPosts: GetPostsResponse
+    getPost(postId: String!): GetPostResponse
+    getUser(username: String!): GetUserResponse
   }
   type Mutation {
     registerUser(

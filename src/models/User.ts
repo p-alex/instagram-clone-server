@@ -9,7 +9,7 @@ const userSchema = new Schema({
   profilePicture: { type: String, default: '' },
   posts: {
     count: { type: Number, default: 0 },
-    postsList: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    postsList: { type: [Schema.Types.ObjectId], ref: 'Post' },
   },
   followers: {
     count: { type: Number, default: 0, required: true },

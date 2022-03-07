@@ -1,12 +1,11 @@
 import { Request } from 'express';
 import { ICreatePostBody } from '..';
-import { IPost, IUser } from '../../../../interfaces';
+import { IPost } from '../../../../interfaces';
 import { isAuth } from '../../../../security/isAuth';
 import { cloudinary } from '../../../../utils/cloudinary';
 import 'dotenv/config';
 import Post from '../../../../models/Post';
 import User from '../../../../models/User';
-import { HydratedDocument } from 'mongoose';
 
 interface ICreatePostResponse {
   statusCode: number;
@@ -18,26 +17,34 @@ export const createPost = async (
   { image, caption }: ICreatePostBody,
   req: Request
 ): Promise<ICreatePostResponse> => {
-  const { isAuthorized, message, userId } = await isAuth(req);
+  const { isAuthorized, message, userId, user } = await isAuth(req);
   if (isAuthorized) {
     // Add image to cloudinary
     try {
-      const uploadedResponse = await cloudinary.uploader.upload(image, {
+      const uploadFullImage = await cloudinary.uploader.upload(image, {
         upload_preset: process.env.CLOUDINARY_POST_IMAGE_UPLOAD_PRESET,
       });
-      const secureImageUrl = uploadedResponse.secure_url;
+      const uploadCroppedImage = await cloudinary.uploader.upload(image, {
+        upload_preset: process.env.CLOUDINARY_POST_IMAGE_UPLOAD_PRESET,
+        transformation: [{ width: 293, height: 293, crop: 'thumb' }],
+      });
+      const fullImageSecureUrl = uploadFullImage.secure_url;
+      const croppedImageSecureUrl = uploadCroppedImage.secure_url;
       // Add post to database
-      const currentDate = Date.now();
       const newPost = new Post({
-        user: userId,
-        images: [secureImageUrl],
+        user: {
+          id: user!.id,
+          username: user?.username,
+          profilePicture: user?.profilePicture,
+        },
+        images: [{ fullImage: fullImageSecureUrl, croppedImage: croppedImageSecureUrl }],
         description: caption,
         likes: { count: 0, users: [] },
         comments: { count: 0, userComments: [] },
       });
       const post: IPost = await newPost.save();
       if (post?.postedAt) {
-        const user: HydratedDocument<IUser> = await User.findById({ _id: userId });
+        const user = await User.findById({ _id: userId });
         if (user?.id) {
           const oldPosts = user.posts;
           const newPosts: { count: number; postsList: string[] } = {
