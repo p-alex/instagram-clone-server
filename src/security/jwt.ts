@@ -14,8 +14,8 @@ export const createRefreshToken = (payload: object): string =>
 export const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'none',
-    domain: 'instagram-clone-9021.netlify.app',
+    path: '/',
   });
 };
