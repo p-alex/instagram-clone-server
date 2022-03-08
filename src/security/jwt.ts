@@ -16,5 +16,6 @@ export const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     maxAge: parseInt(process.env.REFRESH_TOKEN_COOKIE_EXPIRE!),
+    sameSite: 'none',
   });
 };
