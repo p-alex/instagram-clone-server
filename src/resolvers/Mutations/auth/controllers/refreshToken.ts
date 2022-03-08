@@ -59,7 +59,13 @@ export const refreshToken = async (
     };
   } catch (err: any) {
     console.log(err.message);
-    res.clearCookie('refreshToken');
+    res.cookie('refreshToken', '', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+      maxAge: 0,
+    });
     return {
       statusCode: 401,
       success: false,
