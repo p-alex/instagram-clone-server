@@ -16,6 +16,6 @@ export const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'none',
-    domain: 'https://instagram-clone-9021.netlify.app/',
+    domain: 'instagram-clone-9021.netlify.app',
   });
 };
