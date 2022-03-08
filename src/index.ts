@@ -16,17 +16,18 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
 
   app.use(
     cors({
-      origin: [
-        'http://localhost:3000',
-        'https://studio.apollographql.com',
-        'https://infallible-kilby-bdcfb0.netlify.app',
-      ],
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? ['https://infallible-kilby-bdcfb0.netlify.app']
+          : ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     })
   );
 
   app.use(express.json({ limit: '450kb' }));
   app.use(express.urlencoded({ limit: '450kb', extended: true }));
+
+  app.set('trust proxy', 1);
 
   app.use(cookieParser());
 
@@ -44,11 +45,10 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   server.applyMiddleware({
     app,
     cors: {
-      origin: [
-        'http://localhost:3000',
-        'https://studio.apollographql.com',
-        'https://infallible-kilby-bdcfb0.netlify.app',
-      ],
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? ['https://infallible-kilby-bdcfb0.netlify.app']
+          : ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     },
   });

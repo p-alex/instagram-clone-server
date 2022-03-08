@@ -12,7 +12,10 @@ export const logoutUser = async (req: Request, res: Response): Promise<ILogoutUs
   const { isAuthorized, userId, message } = await isAuth(req);
   if (isAuthorized) {
     await User.findByIdAndUpdate({ _id: userId }, { $set: { refreshToken: '' } });
-    res.clearCookie('refreshToken');
+    res.clearCookie('refreshToken', {
+      sameSite: 'none',
+      secure: process.env.NODE_ENV === 'production',
+    });
     return { statusCode: 200, success: true, message: 'Logged out!' };
   }
   return { statusCode: 401, success: false, message };
