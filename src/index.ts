@@ -14,11 +14,13 @@ import cookieParser from 'cookie-parser';
 const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   const app = express();
 
+  app.set('trust proxy', 1);
+
   app.use(
     cors({
       origin:
         process.env.NODE_ENV === 'production'
-          ? ['https://infallible-kilby-bdcfb0.netlify.app']
+          ? ['https://instagram-clone-9021.netlify.app']
           : ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     })
@@ -26,8 +28,6 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
 
   app.use(express.json({ limit: '450kb' }));
   app.use(express.urlencoded({ limit: '450kb', extended: true }));
-
-  app.set('trust proxy', 1);
 
   app.use(cookieParser());
 
@@ -47,7 +47,7 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
     cors: {
       origin:
         process.env.NODE_ENV === 'production'
-          ? ['https://infallible-kilby-bdcfb0.netlify.app']
+          ? ['https://instagram-clone-9021.netlify.app']
           : ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     },
