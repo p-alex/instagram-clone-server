@@ -17,5 +17,7 @@ export const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
     secure: true,
     sameSite: 'none',
     path: '/',
+    maxAge: 1209600000,
+    domain: '.instagram-clone-9021.netlify.app',
   });
 };
