@@ -13,7 +13,7 @@ export const createRefreshToken = (payload: object): string =>
 
 export const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
   res.cookie('refreshToken', refreshToken, {
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     sameSite: 'none',
     maxAge: 1209600000,
