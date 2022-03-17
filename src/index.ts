@@ -20,7 +20,7 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
     cors({
       origin:
         process.env.NODE_ENV === 'production'
-          ? ['https://cool-social-media-app.vercel.app']
+          ? ['https://bubble-social-media-app.vercel.app']
           : ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     })
@@ -47,7 +47,7 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
     cors: {
       origin:
         process.env.NODE_ENV === 'production'
-          ? ['https://cool-social-media-app.vercel.app']
+          ? ['https://bubble-social-media-app.vercel.app']
           : ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     },
