@@ -20,7 +20,7 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
     cors({
       origin:
         process.env.NODE_ENV === 'production'
-          ? ['https://instagram-clone-9021.netlify.app']
+          ? ['https://cool-social-media-app.vercel.app']
           : ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     })
@@ -47,13 +47,13 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
     cors: {
       origin:
         process.env.NODE_ENV === 'production'
-          ? ['https://instagram-clone-9021.netlify.app']
+          ? ['https://cool-social-media-app.vercel.app']
           : ['http://localhost:3000', 'https://studio.apollographql.com'],
       credentials: true,
     },
   });
 
-  const port = process.env.PORT || 5000;
+  const port = process.env.PORT || 5001;
 
   await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
   console.log(`🚀 Server running at http://localhost:${port}/graphql`);
