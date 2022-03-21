@@ -15,7 +15,7 @@ export const logoutUser = async (req: Request, res: Response): Promise<ILogoutUs
   if (isAuthorized) {
     const refreshToken = req.cookies.refreshToken;
     const user: HydratedDocument<IUser> = await User.findById({ _id: userId });
-    user.refreshToken?.filter((token) => token !== refreshToken);
+    user.refreshToken = user.refreshToken?.filter((token) => token !== refreshToken);
     await user.save();
     res.cookie('refreshToken', '', {
       httpOnly: true,
