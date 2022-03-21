@@ -39,8 +39,8 @@ export const refreshToken = async (
       const newRefreshToken = createRefreshToken({ id: user.id });
       // Add new refresh token to database
       const isTokenInArray = user.refreshToken.includes(refreshToken);
-      if (isTokenInArray)
-        user.refreshToken = user.refreshToken.filter((token) => token !== refreshToken);
+      if (!isTokenInArray) throw new Error('Invalid token');
+      user.refreshToken = user.refreshToken.filter((token) => token !== refreshToken);
       user.refreshToken.push(newRefreshToken);
       await user.save();
       setRefreshTokenCookie(res, newRefreshToken);
