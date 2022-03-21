@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import { HydratedDocument } from 'mongoose';
+import { IUser } from '../../../../interfaces';
 import User from '../../../../models/User';
 import { isAuth } from '../../../../security/isAuth';
 
@@ -11,7 +13,10 @@ interface ILogoutUser {
 export const logoutUser = async (req: Request, res: Response): Promise<ILogoutUser> => {
   const { isAuthorized, userId, message } = await isAuth(req);
   if (isAuthorized) {
-    await User.findByIdAndUpdate({ _id: userId }, { $set: { refreshToken: '' } });
+    const refreshToken = req.cookies.refreshToken;
+    const user: HydratedDocument<IUser> = await User.findById({ _id: userId });
+    user.refreshToken?.filter((token) => token !== refreshToken);
+    await user.save();
     res.cookie('refreshToken', '', {
       httpOnly: true,
       secure: true,

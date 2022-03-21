@@ -138,6 +138,11 @@ const typeDefs = gql`
     message: String
     post: Post
   }
+  type LikePostResponse {
+    statusCode: Int
+    success: Boolean
+    message: String
+  }
   type Query {
     getPosts: GetPostsResponse
     getPost(postId: String!): GetPostResponse
@@ -155,6 +160,7 @@ const typeDefs = gql`
     logoutUser: LogoutUserResponse
     refreshToken: RefreshTokenResponse
     createPost(caption: String, image: String!): CreatePostResponse
+    likePost(uid: String, postId: String): LikePostResponse
   }
 `;
 

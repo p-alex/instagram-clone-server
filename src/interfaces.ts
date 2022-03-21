@@ -11,7 +11,7 @@ export interface IUser {
   following: IFollowing;
   gender: string;
   joinedAt: string;
-  refreshToken?: string;
+  refreshToken?: string[];
 }
 export interface IUserProfileInfo {
   userId: string;

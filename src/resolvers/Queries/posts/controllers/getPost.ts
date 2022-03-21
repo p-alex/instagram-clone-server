@@ -17,7 +17,7 @@ export const getPost = async (postId: string) => {
         message: 'No post id provided',
         post: null,
       };
-    const post = await Post.findById({ _id: postId });
+    const post: GetPostResponse = await Post.findById({ _id: postId });
     if (!post)
       return {
         statusCode: 401,

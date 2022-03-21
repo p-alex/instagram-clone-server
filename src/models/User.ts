@@ -21,7 +21,7 @@ const userSchema = new Schema({
   },
   gender: { type: String, default: '' },
   joinedAt: { type: Date, default: Date.now() },
-  refreshToken: { type: String, default: '' },
+  refreshToken: { type: [] },
 });
 
 export default model('User', userSchema);
