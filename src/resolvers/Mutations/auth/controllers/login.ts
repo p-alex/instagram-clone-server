@@ -1,5 +1,4 @@
 import { loginUserType } from '..';
-import User from '../../../../models/User';
 import {
   createAccessToken,
   createRefreshToken,
@@ -26,10 +25,11 @@ export const loginUser = async ({
     username,
     password,
   });
-  if (isValid && user) {
+  if (isValid && user?.refreshToken) {
     const accessToken = createAccessToken({ id: user.id });
     const refreshToken = createRefreshToken({ id: user.id });
-    await User.findByIdAndUpdate({ _id: user.id }, { $set: { refreshToken } });
+    user.refreshToken = [...user.refreshToken, refreshToken];
+    await user.save();
     setRefreshTokenCookie(res!, refreshToken);
     return {
       statusCode: 200,

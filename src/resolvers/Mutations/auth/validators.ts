@@ -1,4 +1,5 @@
 import { compare } from 'bcryptjs';
+import { HydratedDocument } from 'mongoose';
 import { loginUserType, registerUserType } from '.';
 import { IUser } from '../../../interfaces';
 import User from '../../../models/User';
@@ -17,7 +18,7 @@ type registerValidationType = {
 type loginValidationType = {
   isValid: boolean;
   message: string;
-  user: IUser | null;
+  user: HydratedDocument<IUser> | null;
 };
 
 export type validationError = {
@@ -57,7 +58,7 @@ export const loginUserValidation = async ({
 }: loginUserType): Promise<loginValidationType> => {
   try {
     if (!username || !password) throw new Error('Please fill in all fields');
-    const user = await User.findOne({ username });
+    const user: HydratedDocument<IUser> = await User.findOne({ username });
     if (!user) throw new Error('Invalid username or password');
     const isValidPassword = await compare(password, user.password);
     if (!isValidPassword) throw new Error('Invalid username or password');

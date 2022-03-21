@@ -41,7 +41,7 @@ export const refreshToken = async (
       const isTokenInArray = user.refreshToken.includes(refreshToken);
       if (!isTokenInArray) throw new Error('Invalid token');
       user.refreshToken = user.refreshToken.filter((token) => token !== refreshToken);
-      user.refreshToken.push(newRefreshToken);
+      user.refreshToken = [...user.refreshToken, newRefreshToken];
       await user.save();
       setRefreshTokenCookie(res, newRefreshToken);
       return {
