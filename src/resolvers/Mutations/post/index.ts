@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { createPost } from './controllers/createPostController';
-import { likePost } from './controllers/likePostController';
+import { likeOrDislikePost } from './controllers/likePostController';
 
 export interface ICreatePostBody {
   caption: string;
@@ -13,9 +13,9 @@ export default {
     { caption, image }: ICreatePostBody,
     { req }: { req: Request }
   ) => createPost({ image, caption }, req),
-  likePost: (
+  likeOrDislikePost: (
     _: unknown,
-    { uid, postId }: { uid: string; postId: string },
+    { postId }: { postId: string },
     { req }: { req: Request }
-  ) => likePost({ uid, postId, req }),
+  ) => likeOrDislikePost({ postId, req }),
 };

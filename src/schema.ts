@@ -68,9 +68,9 @@ const typeDefs = gql`
     users: [String]
   }
   type GetUserResponse {
-    statusCode: Int
-    success: Boolean
-    message: String
+    statusCode: Int!
+    success: Boolean!
+    message: String!
     user: UserProfileInfo
   }
   type UserProfileInfo {
@@ -84,35 +84,35 @@ const typeDefs = gql`
     posts: Posts
   }
   type GetPostsResponse {
-    statusCode: Int
-    success: Boolean
-    message: String
+    statusCode: Int!
+    success: Boolean!
+    message: String!
     posts: [Post]
   }
   type RegisterUserResponse {
-    statusCode: Int
+    statusCode: Int!
     success: Boolean!
-    message: String
+    message: String!
     user: User
   }
   type LoginUserResponse {
-    statusCode: Int
-    success: Boolean
-    message: String
+    statusCode: Int!
+    success: Boolean!
+    message: String!
     userId: String
     username: String
     profileImg: String
     accessToken: String
   }
   type LogoutUserResponse {
-    statusCode: Int
+    statusCode: Int!
     success: Boolean!
     message: String!
   }
   type RefreshTokenResponse {
-    statusCode: Int
-    success: Boolean
-    message: String
+    statusCode: Int!
+    success: Boolean!
+    message: String!
     userId: String
     username: String
     profileImg: String
@@ -122,9 +122,9 @@ const typeDefs = gql`
     message: String
   }
   type CreatePostResponse {
-    statusCode: Int
-    success: Boolean
-    message: String
+    statusCode: Int!
+    success: Boolean!
+    message: String!
     post: Post
   }
   input CreatePostUser {
@@ -133,15 +133,15 @@ const typeDefs = gql`
     profilePicture: String
   }
   type GetPostResponse {
-    statusCode: Int
-    success: Boolean
-    message: String
+    statusCode: Int!
+    success: Boolean!
+    message: String!
     post: Post
   }
-  type LikePostResponse {
-    statusCode: Int
-    success: Boolean
-    message: String
+  type LikeOrDislikePostResponse {
+    statusCode: Int!
+    success: Boolean!
+    message: String!
   }
   type Query {
     getPosts: GetPostsResponse
@@ -160,7 +160,7 @@ const typeDefs = gql`
     logoutUser: LogoutUserResponse
     refreshToken: RefreshTokenResponse
     createPost(caption: String, image: String!): CreatePostResponse
-    likePost(uid: String, postId: String): LikePostResponse
+    likeOrDislikePost(postId: String!): LikeOrDislikePostResponse
   }
 `;
 

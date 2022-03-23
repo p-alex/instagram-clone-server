@@ -7,8 +7,8 @@ export const isAuth = async (
   req: Request
 ): Promise<{
   isAuthorized: boolean;
-  userId?: string;
-  user?: { id: string; username: string; profilePicture: string };
+  userId: string | null;
+  user: { id: string; username: string; profilePicture: string } | null;
   message: string;
 }> => {
   try {
@@ -29,6 +29,6 @@ export const isAuth = async (
       user,
     };
   } catch (err: any) {
-    return { isAuthorized: false, message: err.message };
+    return { isAuthorized: false, userId: null, user: null, message: err.message };
   }
 };
