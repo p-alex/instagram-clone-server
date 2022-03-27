@@ -37,8 +37,12 @@ const typeDefs = gql`
     postedAt: String!
   }
   type Image {
-    fullImage: String
-    croppedImage: String
+    fullImage: ImageData
+    croppedImage: ImageData
+  }
+  type ImageData {
+    url: String!
+    public_id: String!
   }
   type PostCreator {
     id: ID
@@ -104,11 +108,6 @@ const typeDefs = gql`
     profileImg: String
     accessToken: String
   }
-  type LogoutUserResponse {
-    statusCode: Int!
-    success: Boolean!
-    message: String!
-  }
   type RefreshTokenResponse {
     statusCode: Int!
     success: Boolean!
@@ -138,7 +137,7 @@ const typeDefs = gql`
     message: String!
     post: Post
   }
-  type LikeOrDislikePostResponse {
+  type DefaultResponse {
     statusCode: Int!
     success: Boolean!
     message: String!
@@ -157,10 +156,11 @@ const typeDefs = gql`
       confirmPassword: String!
     ): RegisterUserResponse
     loginUser(username: String!, password: String!): LoginUserResponse
-    logoutUser: LogoutUserResponse
+    logoutUser: DefaultResponse
     refreshToken: RefreshTokenResponse
     createPost(caption: String, image: String!): CreatePostResponse
-    likeOrDislikePost(postId: String!): LikeOrDislikePostResponse
+    likeOrDislikePost(postId: String!): DefaultResponse
+    deletePost(id: String!, postIndex: Int!): DefaultResponse
   }
 `;
 

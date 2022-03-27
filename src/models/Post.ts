@@ -2,7 +2,15 @@ import { Schema, model } from 'mongoose';
 
 const postSchema = new Schema({
   user: { type: { id: String, username: String, profilePicture: String } },
-  images: { type: [], required: true },
+  images: {
+    type: [
+      {
+        fullImage: { url: String, public_id: String },
+        croppedImage: { url: String, public_id: String },
+      },
+    ],
+    required: true,
+  },
   description: { type: String },
   likes: {
     count: { type: Number, default: 0 },

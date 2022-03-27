@@ -2,13 +2,15 @@ import { Request } from 'express';
 import { verify } from 'jsonwebtoken';
 import User from '../models/User';
 import { ForbiddenError } from 'apollo-server-core';
+import { HydratedDocument } from 'mongoose';
+import { IUser } from '../interfaces';
 
 export const isAuth = async (
   req: Request
 ): Promise<{
   isAuthorized: boolean;
   userId: string | null;
-  user: { id: string; username: string; profilePicture: string } | null;
+  user: HydratedDocument<IUser> | null;
   message: string;
 }> => {
   try {
@@ -20,7 +22,7 @@ export const isAuth = async (
       id: string;
     };
     if (!tokenPayload) throw new ForbiddenError('Invalid token');
-    const user = await User.findById({ _id: tokenPayload.id });
+    const user: HydratedDocument<IUser> = await User.findById({ _id: tokenPayload.id });
     if (!user) throw new ForbiddenError("User with the id from the token doesn't exist");
     return {
       isAuthorized: true,
