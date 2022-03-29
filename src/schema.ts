@@ -160,7 +160,7 @@ const typeDefs = gql`
     refreshToken: RefreshTokenResponse
     createPost(caption: String, image: String!): CreatePostResponse
     likeOrDislikePost(postId: String!): DefaultResponse
-    deletePost(id: String!): DefaultResponse
+    deletePost(postId: String!): DefaultResponse
   }
 `;
 
