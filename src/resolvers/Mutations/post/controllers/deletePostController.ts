@@ -1,28 +1,39 @@
 import { Request } from 'express';
-import { IPost, IUser } from '../../../../interfaces';
 import Post from '../../../../models/Post';
 import { isAuth } from '../../../../security/isAuth';
 import { cloudinary } from '../../../../utils/cloudinary';
 
-export const deletePost = async (id: string, postIndex: number, req: Request) => {
-  const { isAuthorized, message, user } = await isAuth(req);
+export const deletePost = async (postId: string, req: Request) => {
+  const { isAuthorized, message, user, userId } = await isAuth(req);
   if (!isAuthorized) return { statusCode: 401, success: false, message };
   try {
     // Delete post from posts colletion
-    const deletePostResponse: IPost = await Post.findOneAndDelete({ _id: id });
-    if (!deletePostResponse?.id) throw new Error("Couldn't delete post");
-    const postFullImagePublic = deletePostResponse.images[0].fullImage.public_id;
-    const postCroppedImagePublic = deletePostResponse.images[0].croppedImage.public_id;
+    const post = await Post.findById({ _id: postId });
+
+    if (post.user._id.toString() !== userId)
+      return {
+        statusCode: 403,
+        success: false,
+        message: "You can't delete a post that isn't yours...",
+      };
+
+    await post.delete();
+
     // Delete post from users collection
     user!.posts.count -= 1;
     user!.posts.postsList = user!.posts.postsList.filter(
-      (post, index) => index !== postIndex
+      (post: any, index) => post._id.toString() !== postId
     );
-    const updateUserResponse: IUser = await user!.save();
-    if (!updateUserResponse?.id) throw new Error("Couldn't update user posts");
+    await user!.save();
+
     // Delete images from cloudinary
+    const postFullImagePublic = post.images[0].fullImage.public_id;
+
+    const postCroppedImagePublic = post.images[0].croppedImage.public_id;
+
     await cloudinary.uploader.destroy(postFullImagePublic);
     await cloudinary.uploader.destroy(postCroppedImagePublic);
+
     return { statusCode: 200, success: true, message: 'Post deleted successfully' };
   } catch (error: any) {
     return { statusCode: 500, success: false, message: error.message };
