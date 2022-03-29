@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { IPost } from '../../../../interfaces';
 import Post from '../../../../models/Post';
 import { isAuth } from '../../../../security/isAuth';
@@ -18,12 +18,16 @@ export const likeOrDislikePost = async ({
     const post: HydratedDocument<IPost> = await Post.findById({ _id: postId });
     if (!post.id) throw new Error("That post doesn't exist");
 
-    const isLiked = post.likes.users.includes(userId!);
+    const convertToObjectId = new Types.ObjectId(userId!).toString();
+
+    const isLiked = post.likes.users.includes(convertToObjectId);
 
     if (isLiked) {
       // Dislike post
       post.likes.count -= 1;
-      post.likes.users = post.likes.users.filter((id) => id !== userId);
+      post.likes.users = post.likes.users.filter(
+        (id: any) => id._id.toString() !== userId
+      );
       const response = await post.save();
       if (response?._id)
         return {

@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 const postSchema = new Schema({
-  user: { type: { id: String, username: String, profilePicture: String } },
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
   images: {
     type: [
       {
@@ -14,13 +14,13 @@ const postSchema = new Schema({
   description: { type: String },
   likes: {
     count: { type: Number, default: 0 },
-    users: [],
+    users: { type: [Schema.Types.ObjectId], ref: 'User' },
   },
   comments: {
     count: { type: Number, default: 0, required: true },
-    userComments: { type: [{ type: Schema.Types.ObjectId, ref: 'Comment' }] },
+    userComments: { type: [Schema.Types.ObjectId], ref: 'Comment' },
   },
-  postedAt: { type: Number, default: Date.now(), required: true },
+  postedAt: { type: Number, required: true },
 });
 
 export default model('Post', postSchema);

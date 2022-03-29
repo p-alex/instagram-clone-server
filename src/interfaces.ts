@@ -47,16 +47,19 @@ export interface IImage {
 }
 export interface IComments {
   count: number;
-  commentsList: string[];
+  commentsList: IComment[];
 }
 export interface IComment {
   id: string;
-  isReply: boolean;
   user: ICommentCreator;
   comment: string;
-  likes: string[];
+  likes: ILikes;
   replies: Comment[];
   postedAt: string;
+}
+export interface IReplies {
+  count: number;
+  replyList: IComment[];
 }
 export interface ICommentCreator {
   id: string;

@@ -13,7 +13,7 @@ interface ICreatePostResponse {
 }
 
 export const createPost = async ({ image, caption }: ICreatePostBody, req: Request) => {
-  const { isAuthorized, message, userId, user } = await isAuth(req);
+  const { isAuthorized, message, user } = await isAuth(req);
   if (!isAuthorized) return { statusCode: 401, success: false, message };
   try {
     if (!user?.id) throw new Error("Couldn't find user");
@@ -33,11 +33,7 @@ export const createPost = async ({ image, caption }: ICreatePostBody, req: Reque
 
     // Add post to database
     const newPost = new Post({
-      user: {
-        id: user!.id,
-        username: user?.username,
-        profilePicture: user?.profilePicture,
-      },
+      user: user.id,
       images: [
         {
           fullImage: { url: fullImageSecureUrl, public_id: uploadFullImage.public_id },
@@ -50,6 +46,7 @@ export const createPost = async ({ image, caption }: ICreatePostBody, req: Reque
       description: caption,
       likes: { count: 0, users: [] },
       comments: { count: 0, userComments: [] },
+      postedAt: Date.now(),
     });
     const post = await newPost.save();
 

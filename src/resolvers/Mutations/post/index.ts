@@ -19,9 +19,6 @@ export default {
     { postId }: { postId: string },
     { req }: { req: Request }
   ) => likeOrDislikePost({ postId, req }),
-  deletePost: (
-    _: unknown,
-    { id, postIndex }: { id: string; postIndex: number },
-    { req }: { req: Request }
-  ) => deletePost(id, postIndex, req),
+  deletePost: (_: unknown, { postId }: { postId: string }, { req }: { req: Request }) =>
+    deletePost(postId, req),
 };

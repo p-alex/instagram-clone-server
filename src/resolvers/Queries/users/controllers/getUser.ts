@@ -13,7 +13,6 @@ export const getUser = async (
   try {
     const user: IUser = await User.findOne({ username }).populate({
       path: 'posts.postsList',
-      //options: { limit: 15 },
     });
     if (!user)
       return { statusCode: 403, success: false, message: 'Forbidden', user: null };
