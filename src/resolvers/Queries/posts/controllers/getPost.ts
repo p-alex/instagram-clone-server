@@ -17,9 +17,10 @@ export const getPost = async (postId: string) => {
         message: 'No post id provided',
         post: null,
       };
-    const post: GetPostResponse = await Post.findById({ _id: postId }).populate({
-      path: 'user',
-    });
+    const post = await Post.findById({ _id: postId }).populate(
+      'user',
+      '-posts -followers -following -fullname -bio -gender -joinedAt -email -refreshToken -password -__v'
+    );
     if (!post)
       return {
         statusCode: 401,

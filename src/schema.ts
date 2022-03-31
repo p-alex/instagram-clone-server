@@ -29,7 +29,7 @@ const typeDefs = gql`
   }
   type Post {
     id: ID
-    user: PostCreator
+    user: LiteUser
     images: [Image]
     description: String
     likes: Likes
@@ -44,32 +44,30 @@ const typeDefs = gql`
     url: String!
     public_id: String!
   }
-  type PostCreator {
-    id: ID
-    username: String
-    profilePicture: String
-  }
   type Comments {
     count: Int!
-    comments: [Comment]
+    userComments: [String]
   }
   type Comment {
-    id: ID!
-    isReply: Boolean!
-    user: CommentCreator!
-    comment: String!
-    likes: Likes
-    replies: [Comment]!
-    postedAt: Int!
-  }
-  type CommentCreator {
     id: ID
-    username: String
-    profilePicture: String
+    user: LiteUser
+    comment: String
+    likes: Likes
+    replies: Replies
+    postedAt: String
   }
   type Likes {
     count: Int!
     users: [String]
+  }
+  type Replies {
+    count: Int!
+    userReplies: [String]
+  }
+  type LiteUser {
+    id: ID!
+    username: String!
+    profilePicture: String
   }
   type GetUserResponse {
     statusCode: Int!
@@ -137,6 +135,18 @@ const typeDefs = gql`
     message: String!
     post: Post
   }
+  type GetCommentsResponse {
+    statusCode: Int!
+    success: Boolean!
+    message: String!
+    comments: [Comment]
+  }
+  type AddCommentResponse {
+    statusCode: Int!
+    success: Boolean!
+    message: String!
+    comment: Comment
+  }
   type DefaultResponse {
     statusCode: Int!
     success: Boolean!
@@ -144,8 +154,9 @@ const typeDefs = gql`
   }
   type Query {
     getPosts: GetPostsResponse
-    getPost(postId: String!): GetPostResponse
+    getPost(postId: ID!): GetPostResponse
     getUser(username: String!): GetUserResponse
+    getComments(postId: String!): GetCommentsResponse
   }
   type Mutation {
     registerUser(
@@ -161,6 +172,12 @@ const typeDefs = gql`
     createPost(caption: String, image: String!): CreatePostResponse
     likeOrDislikePost(postId: String!): DefaultResponse
     deletePost(postId: String!): DefaultResponse
+    addComment(comment: String!, postId: String!): AddCommentResponse
+    deleteComment(commentId: String!, postId: String!): DefaultResponse
+    likeOrDislikeComment(commentId: String!): DefaultResponse
+    addReply(reply: String!, repliedTo: String!, commentId: String!): DefaultResponse
+    deleteReply(replyId: String!): DefaultResponse
+    likeOrDislikeReply(replyId: String!): DefaultResponse
   }
 `;
 

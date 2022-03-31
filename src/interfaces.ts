@@ -23,18 +23,13 @@ export interface IUserProfileInfo {
   following: IFollowing;
   posts: IPosts;
 }
-export interface IPostUser {
-  id: string;
-  username: string;
-  profilePicture: string;
-}
 export interface IPosts {
   count: number;
   postsList: IPost[];
 }
 export interface IPost {
   id: string;
-  user: IPostUser;
+  user: ILiteUser;
   images: IImage[];
   description: string;
   likes: ILikes;
@@ -51,20 +46,29 @@ export interface IComments {
 }
 export interface IComment {
   id: string;
-  user: ICommentCreator;
+  user: ILiteUser;
   comment: string;
   likes: ILikes;
-  replies: Comment[];
+  replies: IReplies;
   postedAt: string;
 }
-export interface IReplies {
-  count: number;
-  replyList: IComment[];
+export interface IReply {
+  id: string;
+  parentComment: IComment;
+  user: ILiteUser;
+  repliedTo: string;
+  reply: string;
+  likes: ILikes;
+  postedAt: string;
 }
-export interface ICommentCreator {
+export interface ILiteUser {
   id: string;
   username: string;
   profilePicture: string;
+}
+export interface IReplies {
+  count: number;
+  replyList: IReply[];
 }
 export interface ILikes {
   count: number;
