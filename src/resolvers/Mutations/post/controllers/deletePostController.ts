@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import Comment from '../../../../models/Comment';
 import Post from '../../../../models/Post';
 import { isAuth } from '../../../../security/isAuth';
 import { cloudinary } from '../../../../utils/cloudinary';
@@ -17,7 +18,10 @@ export const deletePost = async (postId: string, req: Request) => {
         message: "You can't delete a post that isn't yours...",
       };
 
-    await post.delete();
+    await post.remove();
+
+    //  Delete all the comments associated with the post
+    await Comment.remove({ _id: { $in: post.comments.userComments } });
 
     // Delete post from users collection
     user!.posts.count -= 1;
