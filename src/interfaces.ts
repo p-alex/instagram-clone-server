@@ -42,7 +42,7 @@ export interface IImage {
 }
 export interface IComments {
   count: number;
-  commentsList: IComment[];
+  userComments: IComment[];
 }
 export interface IComment {
   id: string;
@@ -62,6 +62,7 @@ export interface IReply {
   postedAt: string;
 }
 export interface ILiteUser {
+  _id: string;
   id: string;
   username: string;
   profilePicture: string;
