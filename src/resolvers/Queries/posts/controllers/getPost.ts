@@ -8,7 +8,7 @@ type GetPostResponse = {
   post: IPost | null;
 };
 
-export const getPost = async (postId: string) => {
+export const getPost = async (postId: string): Promise<GetPostResponse> => {
   try {
     if (!postId)
       return {
@@ -17,10 +17,14 @@ export const getPost = async (postId: string) => {
         message: 'No post id provided',
         post: null,
       };
+
     const post = await Post.findById({ _id: postId }).populate(
       'user',
-      '-posts -followers -following -fullname -bio -gender -joinedAt -email -refreshToken -password -__v'
+      '-refreshToken -password'
     );
+
+    console.log(post);
+
     if (!post)
       return {
         statusCode: 401,

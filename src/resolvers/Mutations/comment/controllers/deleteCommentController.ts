@@ -23,7 +23,11 @@ export const deleteComment = async (commentId: string, postId: string, req: Requ
         message: "You can't delete a comment that isn't yours...",
       };
     }
-    await comment.delete();
+
+    await Comment.findByIdAndDelete({
+      _id: commentId,
+    });
+
     // Delete comment from post's comments array
     const post: HydratedDocument<IPost> = await Post.findById({ _id: postId });
     post.comments.count -= 1;

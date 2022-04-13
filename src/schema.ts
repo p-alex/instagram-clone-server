@@ -13,7 +13,8 @@ const typeDefs = gql`
     followers: Followers
     following: Following
     gender: String
-    joinedAt: String
+    createdAt: String
+    updatedAt: String
   }
   type Followers {
     count: Int!
@@ -34,7 +35,8 @@ const typeDefs = gql`
     description: String
     likes: Likes
     comments: Comments
-    postedAt: String!
+    createdAt: String
+    updatedAt: String
   }
   type Image {
     fullImage: ImageData
@@ -54,7 +56,8 @@ const typeDefs = gql`
     comment: String
     likes: Likes
     replies: Replies
-    postedAt: String
+    createdAt: String
+    updatedAt: String
   }
   type Likes {
     count: Int!
@@ -63,6 +66,15 @@ const typeDefs = gql`
   type Replies {
     count: Int!
     userReplies: [String]
+  }
+  type Reply {
+    parentCommentId: String!
+    user: LiteUser!
+    repliedTo: String!
+    reply: String!
+    likes: Likes!
+    createdAt: String
+    updatedAt: String
   }
   type LiteUser {
     id: ID!
@@ -74,6 +86,7 @@ const typeDefs = gql`
     success: Boolean!
     message: String!
     user: UserProfileInfo
+    isFollowed: Boolean
   }
   type UserProfileInfo {
     userId: ID
@@ -152,11 +165,23 @@ const typeDefs = gql`
     success: Boolean!
     message: String!
   }
+  type Suggestion {
+    id: String!
+    username: String!
+    profilePicture: String
+  }
+  type GetSuggestionsResponse {
+    statusCode: Int!
+    success: Boolean!
+    message: String!
+    suggestions: [Suggestion]
+  }
   type Query {
     getPosts: GetPostsResponse
     getPost(postId: ID!): GetPostResponse
-    getUser(username: String!): GetUserResponse
+    getUser(username: String!, authenticatedUserId: String): GetUserResponse
     getComments(postId: String!): GetCommentsResponse
+    getSuggestions: GetSuggestionsResponse
   }
   type Mutation {
     registerUser(
@@ -175,9 +200,7 @@ const typeDefs = gql`
     addComment(comment: String!, postId: String!): AddCommentResponse
     deleteComment(commentId: String!, postId: String!): DefaultResponse
     likeOrDislikeComment(commentId: String!): DefaultResponse
-    addReply(reply: String!, repliedTo: String!, commentId: String!): DefaultResponse
-    deleteReply(replyId: String!): DefaultResponse
-    likeOrDislikeReply(replyId: String!): DefaultResponse
+    followOrUnfollowUser(userId: String!, type: String!): DefaultResponse
   }
 `;
 

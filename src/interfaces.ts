@@ -10,7 +10,8 @@ export interface IUser {
   followers: IFollowers;
   following: IFollowing;
   gender: string;
-  joinedAt: string;
+  createdAt: string;
+  updatedAt: string;
   refreshToken?: string[];
 }
 export interface IUserProfileInfo {
@@ -34,7 +35,8 @@ export interface IPost {
   description: string;
   likes: ILikes;
   comments: IComments;
-  postedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface IImage {
   fullImage: { url: string; public_id: string };
@@ -50,7 +52,8 @@ export interface IComment {
   comment: string;
   likes: ILikes;
   replies: IReplies;
-  postedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface IReply {
   id: string;
@@ -59,7 +62,8 @@ export interface IReply {
   repliedTo: string;
   reply: string;
   likes: ILikes;
-  postedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface ILiteUser {
   _id: string;
@@ -69,11 +73,16 @@ export interface ILiteUser {
 }
 export interface IReplies {
   count: number;
-  replyList: IReply[];
+  userReplies: IReply[];
 }
 export interface ILikes {
   count: number;
   users: string[];
+}
+export interface Suggestion {
+  id: string;
+  username: string;
+  profilePicture: string;
 }
 export interface IFollowers {
   count: number;

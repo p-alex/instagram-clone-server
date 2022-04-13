@@ -18,7 +18,7 @@ export const deletePost = async (postId: string, req: Request) => {
         message: "You can't delete a post that isn't yours...",
       };
 
-    await post.remove();
+    await Post.findByIdAndDelete({ _id: postId });
 
     //  Delete all the comments associated with the post
     await Comment.remove({ _id: { $in: post.comments.userComments } });
