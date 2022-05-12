@@ -39,7 +39,7 @@ export interface IPost {
   updatedAt: string;
 }
 export interface IImage {
-  fullImage: { url: string; public_id: string };
+  fullImage: { url: string; public_id: string; aspectRatio: number };
   croppedImage: { url: string; public_id: string };
 }
 export interface IComments {
