@@ -1,10 +1,10 @@
-import { Request } from 'express';
-import { ICreatePostBody } from '..';
-import { IPosts, IUser } from '../../../../interfaces';
-import { isAuth } from '../../../../security/isAuth';
-import { cloudinary } from '../../../../utils/cloudinary';
-import 'dotenv/config';
-import Post from '../../../../models/Post';
+import { Request } from "express";
+import { ICreatePostBody } from "..";
+import { IPosts, IUser } from "../../../../interfaces";
+import { isAuth } from "../../../../security/isAuth";
+import { cloudinary } from "../../../../utils/cloudinary";
+import "dotenv/config";
+import Post from "../../../../models/Post";
 
 interface ICreatePostResponse {
   statusCode: number;
@@ -12,7 +12,10 @@ interface ICreatePostResponse {
   message: string;
 }
 
-export const createPost = async ({ image, caption }: ICreatePostBody, req: Request) => {
+export const createPost = async (
+  { image, caption, aspectRatio }: ICreatePostBody,
+  req: Request
+) => {
   const { isAuthorized, message, user } = await isAuth(req);
   if (!isAuthorized) return { statusCode: 401, success: false, message };
   try {
@@ -24,7 +27,7 @@ export const createPost = async ({ image, caption }: ICreatePostBody, req: Reque
     });
     const uploadCroppedImage = await cloudinary.uploader.upload(image, {
       upload_preset: process.env.CLOUDINARY_POST_IMAGE_UPLOAD_PRESET,
-      transformation: [{ width: 293, height: 293, crop: 'thumb' }],
+      transformation: [{ width: 293, height: 293, crop: "thumb" }],
     });
 
     // Secure image urls
@@ -36,7 +39,11 @@ export const createPost = async ({ image, caption }: ICreatePostBody, req: Reque
       user: user.id,
       images: [
         {
-          fullImage: { url: fullImageSecureUrl, public_id: uploadFullImage.public_id },
+          fullImage: {
+            url: fullImageSecureUrl,
+            public_id: uploadFullImage.public_id,
+            aspectRatio,
+          },
           croppedImage: {
             url: croppedImageSecureUrl,
             public_id: uploadCroppedImage.public_id,
@@ -63,7 +70,7 @@ export const createPost = async ({ image, caption }: ICreatePostBody, req: Reque
       return {
         statusCode: 201,
         success: true,
-        message: 'Post created successfully',
+        message: "Post created successfully",
       };
     }
   } catch (error: any) {

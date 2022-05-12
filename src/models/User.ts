@@ -1,30 +1,39 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
     fullname: { type: String, required: true },
-    email: { type: String, required: true, lowercase: true, trim: true, unique: true },
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+      unique: true,
+    },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    bio: { type: String, default: '' },
-    profilePicture: { type: String, default: '' },
+    bio: { type: String, default: "" },
+    profilePicture: {
+      type: String,
+      default: "/images/default-profile-picture.jpg",
+    },
     posts: {
       count: { type: Number, default: 0 },
-      postsList: { type: [Schema.Types.ObjectId], ref: 'Post' },
+      postsList: { type: [Schema.Types.ObjectId], ref: "Post" },
     },
     followers: {
       count: { type: Number, default: 0, required: true },
-      followersList: { type: [Schema.Types.ObjectId], ref: 'User' },
+      followersList: { type: [Schema.Types.ObjectId], ref: "User" },
     },
     following: {
       count: { type: Number, default: 0, required: true },
-      followingList: { type: [Schema.Types.ObjectId], ref: 'User' },
+      followingList: { type: [Schema.Types.ObjectId], ref: "User" },
     },
-    gender: { type: String, default: '' },
+    gender: { type: String, default: "" },
     isPrivate: { type: Boolean, default: false, required: true },
     refreshToken: { type: [] },
   },
   { timestamps: true }
 );
 
-export default model('User', userSchema);
+export default model("User", userSchema);

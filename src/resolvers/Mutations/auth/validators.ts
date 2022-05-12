@@ -1,14 +1,14 @@
-import { compare } from 'bcryptjs';
-import { HydratedDocument } from 'mongoose';
-import { loginUserType, registerUserType } from '.';
-import { IUser } from '../../../interfaces';
-import User from '../../../models/User';
+import { compare } from "bcryptjs";
+import { HydratedDocument } from "mongoose";
+import { loginUserType, registerUserType } from ".";
+import { IUser } from "../../../interfaces";
+import User from "../../../models/User";
 import {
   isValidEmail,
   isValidFullname,
   isValidPassword,
   isValidUsername,
-} from '../../../utils/register-validation';
+} from "../../../utils/register-validation";
 
 type registerValidationType = {
   isValid: boolean;
@@ -35,17 +35,18 @@ export const registerUserValidation = async ({
 }: registerUserType): Promise<registerValidationType> => {
   try {
     if (!fullname || !email || !username || !password || !confirmPassword)
-      throw new Error('Please fill in all fields');
-    if (!isValidEmail(email)) throw new Error('Invalid email');
+      throw new Error("Please fill in all fields");
+    if (!isValidEmail(email)) throw new Error("Invalid email");
     const user = await User.findOne({ email });
-    if (user) throw new Error('A user with that email already exists');
+    if (user) throw new Error("A user with that email already exists");
     const isUniqueUsername = await User.findOne({ username });
-    if (isUniqueUsername) throw new Error('A user with that username already exists');
-    if (!isValidFullname(fullname)) throw new Error('Invalid fullname');
-    if (!isValidUsername(username)) throw new Error('Invalid username');
-    if (!isValidPassword(password)) throw new Error('Invalid password');
-    if (password !== confirmPassword) throw new Error('Passwords must match');
-    return { isValid: true, message: 'Success!' };
+    if (isUniqueUsername)
+      throw new Error("A user with that username already exists");
+    if (!isValidFullname(fullname)) throw new Error("Invalid fullname");
+    if (!isValidUsername(username)) throw new Error("Invalid username");
+    if (!isValidPassword(password)) throw new Error("Invalid password");
+    if (password !== confirmPassword) throw new Error("Passwords must match");
+    return { isValid: true, message: "Success!" };
   } catch (err: any) {
     return { isValid: false, message: err.message };
   }
@@ -57,12 +58,12 @@ export const loginUserValidation = async ({
   password,
 }: loginUserType): Promise<loginValidationType> => {
   try {
-    if (!username || !password) throw new Error('Please fill in all fields');
+    if (!username || !password) throw new Error("Please fill in all fields");
     const user: HydratedDocument<IUser> = await User.findOne({ username });
-    if (!user) throw new Error('Invalid username or password');
+    if (!user) throw new Error("Invalid username or password");
     const isValidPassword = await compare(password, user.password);
-    if (!isValidPassword) throw new Error('Invalid username or password');
-    return { isValid: true, message: 'Valid credentials', user };
+    if (!isValidPassword) throw new Error("Invalid username or password");
+    return { isValid: true, message: "Valid credentials", user };
   } catch (err: any) {
     return { isValid: false, message: err.message, user: null };
   }

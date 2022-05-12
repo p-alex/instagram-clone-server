@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import { gql } from "apollo-server-express";
 
 const typeDefs = gql`
   type User {
@@ -39,10 +39,15 @@ const typeDefs = gql`
     updatedAt: String
   }
   type Image {
-    fullImage: ImageData
-    croppedImage: ImageData
+    fullImage: FullImage
+    croppedImage: CroppedImage
   }
-  type ImageData {
+  type FullImage {
+    url: String!
+    public_id: String!
+    aspectRatio: Float!
+  }
+  type CroppedImage {
     url: String!
     public_id: String!
   }
@@ -134,7 +139,7 @@ const typeDefs = gql`
   type CreatePostResponse {
     statusCode: Int!
     success: Boolean!
-    message: String!
+    message: String
     post: Post
   }
   input CreatePostUser {
@@ -194,7 +199,11 @@ const typeDefs = gql`
     loginUser(username: String!, password: String!): LoginUserResponse
     logoutUser: DefaultResponse
     refreshToken: RefreshTokenResponse
-    createPost(caption: String, image: String!): CreatePostResponse
+    createPost(
+      caption: String
+      image: String!
+      aspectRatio: Float!
+    ): CreatePostResponse
     likeOrDislikePost(postId: String!): DefaultResponse
     deletePost(postId: String!): DefaultResponse
     addComment(comment: String!, postId: String!): AddCommentResponse
