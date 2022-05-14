@@ -1,6 +1,6 @@
-import { Request } from 'express';
-import { IUser, IUserProfileInfo } from '../../../../interfaces';
-import User from '../../../../models/User';
+import { Request } from "express";
+import { IUser, IUserProfileInfo } from "../../../../interfaces";
+import User from "../../../../models/User";
 export const getUser = async (
   username: string,
   authenticatedUserId: string | null,
@@ -14,7 +14,7 @@ export const getUser = async (
 }> => {
   try {
     const user: IUser = await User.findOne({ username }).populate({
-      path: 'posts.postsList',
+      path: "posts.postsList",
     });
 
     let isFollowed;
@@ -26,13 +26,11 @@ export const getUser = async (
       isFollowed = followers.includes(authenticatedUserId);
     }
 
-    console.log(isFollowed);
-
     if (!user)
       return {
         statusCode: 403,
         success: false,
-        message: 'Forbidden',
+        message: "Forbidden",
         user: null,
         isFollowed: null,
       };
@@ -53,7 +51,7 @@ export const getUser = async (
       return {
         statusCode: 200,
         success: true,
-        message: 'Found user',
+        message: "Found user",
         user: userProfileInfo,
         isFollowed: isFollowed === undefined ? null : isFollowed,
       };
@@ -70,7 +68,7 @@ export const getUser = async (
   return {
     statusCode: 500,
     success: false,
-    message: 'Something went wrong',
+    message: "Something went wrong",
     user: null,
     isFollowed: false,
   };

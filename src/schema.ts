@@ -92,6 +92,7 @@ const typeDefs = gql`
     message: String!
     user: UserProfileInfo
     isFollowed: Boolean
+    hasFollowings: Boolean
   }
   type UserProfileInfo {
     userId: ID
@@ -119,19 +120,20 @@ const typeDefs = gql`
     statusCode: Int!
     success: Boolean!
     message: String!
-    userId: String
+    user: AuthUserObject
+  }
+  type AuthUserObject {
+    id: String
     username: String
     profileImg: String
+    hasFollowings: Boolean
     accessToken: String
   }
   type RefreshTokenResponse {
     statusCode: Int!
     success: Boolean!
     message: String!
-    userId: String
-    username: String
-    profileImg: String
-    accessToken: String
+    user: AuthUserObject
   }
   type Error {
     message: String

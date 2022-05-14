@@ -1,19 +1,22 @@
-import { loginUserType } from '..';
+import { loginUserType } from "..";
 import {
   createAccessToken,
   createRefreshToken,
   setRefreshTokenCookie,
-} from '../../../../security/jwt';
-import { loginUserValidation } from '../validators';
+} from "../../../../security/jwt";
+import { loginUserValidation } from "../validators";
 
 interface ILoginUserResponse {
   statusCode: number;
   success: boolean;
   message: string;
-  userId: string | null;
-  username: string | null;
-  profileImg: string | null;
-  accessToken: string | null;
+  user: {
+    id: string | null;
+    username: string | null;
+    profileImg: string | null;
+    hasFollowings: boolean | null;
+    accessToken: string | null;
+  } | null;
 }
 
 export const loginUser = async ({
@@ -35,19 +38,19 @@ export const loginUser = async ({
       statusCode: 200,
       success: isValid,
       message,
-      userId: user.id!,
-      username: user.username,
-      profileImg: user.profilePicture,
-      accessToken,
+      user: {
+        id: user.id!,
+        username: user.username,
+        profileImg: user.profilePicture,
+        hasFollowings: user.following.count > 0,
+        accessToken,
+      },
     };
   }
   return {
     statusCode: 401,
     success: isValid,
     message,
-    userId: null,
-    username: null,
-    profileImg: null,
-    accessToken: null,
+    user: null,
   };
 };
