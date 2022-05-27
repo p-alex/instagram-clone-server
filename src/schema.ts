@@ -37,6 +37,7 @@ const typeDefs = gql`
     comments: Comments
     createdAt: String
     updatedAt: String
+    isLiked: Boolean
   }
   type Image {
     fullImage: FullImage
@@ -125,6 +126,7 @@ const typeDefs = gql`
   type AuthUserObject {
     id: String
     username: String
+    fullname: String
     profileImg: String
     hasFollowings: Boolean
     accessToken: String
@@ -176,6 +178,7 @@ const typeDefs = gql`
     id: String!
     username: String!
     profilePicture: String
+    isFollowed: Boolean
   }
   type GetSuggestionsResponse {
     statusCode: Int!
@@ -185,7 +188,8 @@ const typeDefs = gql`
   }
   type Query {
     getPosts: GetPostsResponse
-    getPost(postId: ID!): GetPostResponse
+    getPost(postId: ID!, userId: String): GetPostResponse
+    getFeedPosts(currentPage: Int!, maxPostsPerPage: Int!): GetPostsResponse
     getUser(username: String!, authenticatedUserId: String): GetUserResponse
     getComments(postId: String!): GetCommentsResponse
     getSuggestions: GetSuggestionsResponse

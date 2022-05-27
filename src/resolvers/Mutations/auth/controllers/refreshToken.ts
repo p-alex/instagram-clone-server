@@ -16,6 +16,7 @@ interface IRefreshTokenResponse {
   user: {
     id: string;
     username: string;
+    fullname: string;
     profileImg: string;
     hasFollowings: boolean;
     accessToken: string;
@@ -59,6 +60,7 @@ export const refreshToken = async (
         user: {
           id: user.id,
           username: user.username,
+          fullname: user.fullname,
           profileImg: user.profilePicture,
           hasFollowings: user.following.count > 0,
           accessToken: newAccessToken,

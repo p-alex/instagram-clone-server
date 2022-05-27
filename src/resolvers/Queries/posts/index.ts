@@ -1,8 +1,18 @@
-import { Request } from 'express';
-import { getPost } from './controllers/getPost';
-import { getPosts } from './controllers/getPosts';
+import { Request } from "express";
+import { getFeedPosts } from "./controllers/getFeedPosts";
+import { getPost } from "./controllers/getPost";
 
 export default {
-  getPosts: (_: undefined, __: {}, { req }: { req: Request }) => getPosts(req),
-  getPost: (_: unknown, { postId }: { postId: string }) => getPost(postId),
+  getPost: (
+    _: unknown,
+    { postId, userId }: { postId: string; userId: string }
+  ) => getPost(postId, userId),
+  getFeedPosts: (
+    _: unknown,
+    {
+      currentPage,
+      maxPostsPerPage,
+    }: { currentPage: number; maxPostsPerPage: number },
+    { req }: { req: Request }
+  ) => getFeedPosts(currentPage, maxPostsPerPage, req),
 };
