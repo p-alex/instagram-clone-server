@@ -23,7 +23,6 @@ export const getSuggestions = async (req: Request) => {
         };
       });
 
-    console.log(suggestions);
     return {
       statusCode: 200,
       success: true,

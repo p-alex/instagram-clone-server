@@ -1,21 +1,15 @@
 import { Types } from "mongoose";
 import { IPost } from "../../../../interfaces";
 import Post from "../../../../models/Post";
-
-type GetPostResponse = {
-  statusCode: number;
-  success: boolean;
-  message: string;
-  post: IPost | null;
-};
+import User from "../../../../models/User";
 
 export const getPost = async (postId: string, userId: string | null) => {
   try {
-    if (!postId)
+    if (!postId || !userId)
       return {
         statusCode: 401,
         success: false,
-        message: "No post id provided",
+        message: "No post id or user id provided",
         post: null,
       };
 
@@ -24,10 +18,24 @@ export const getPost = async (postId: string, userId: string | null) => {
       "id username profilePicture"
     );
 
+    let currentUserFollowing = await User.findById(
+      {
+        _id: userId,
+      },
+      { _id: 0, following: true }
+    );
+
     const isPostLiked = (): boolean => {
-      if (!userId) return false;
       const convertedUserId = new Types.ObjectId(userId).toString();
       if (post.likes.users.includes(convertedUserId)) return true;
+      return false;
+    };
+
+    const isPostOwnerFollowed = (): boolean => {
+      if (
+        currentUserFollowing.following.followingList.indexOf(post.user.id) >= 0
+      )
+        return true;
       return false;
     };
 
@@ -41,9 +49,8 @@ export const getPost = async (postId: string, userId: string | null) => {
       comments: post.comments,
       createdAt: post.createdAt,
       isLiked: isPostLiked(),
+      isPostOwnerFollowed: isPostOwnerFollowed(),
     };
-
-    console.log(updatedPost);
 
     if (!post)
       return {

@@ -38,6 +38,7 @@ const typeDefs = gql`
     createdAt: String
     updatedAt: String
     isLiked: Boolean
+    isPostOwnerFollowed: Boolean
   }
   type Image {
     fullImage: FullImage

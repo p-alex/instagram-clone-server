@@ -3,13 +3,6 @@ import { IPost } from "../../../../interfaces";
 import Post from "../../../../models/Post";
 import { isAuth } from "../../../../security/isAuth";
 
-type GetFeedPosts = {
-  statusCode: number;
-  success: boolean;
-  message: string;
-  post: IPost | null;
-};
-
 export const getFeedPosts = async (
   currentPage: number,
   maxPostsPerPage: number,
@@ -25,8 +18,6 @@ export const getFeedPosts = async (
       .limit(maxPostsPerPage)
       .populate("user", "id username profilePicture")
       .sort({ createdAt: -1 });
-
-    console.log(currentPage > 0 && posts);
 
     // Adding isLiked boolean to every post
     const updatedPosts = posts.map((post) => {
