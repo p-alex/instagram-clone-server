@@ -5,13 +5,7 @@ export const getUser = async (
   username: string,
   authenticatedUserId: string | null,
   req: Request
-): Promise<{
-  statusCode: number;
-  success: boolean;
-  message: string;
-  user: IUserProfileInfo | null;
-  isFollowed: boolean | null;
-}> => {
+) => {
   try {
     const user: IUser = await User.findOne({ username }).populate({
       path: "posts.postsList",
@@ -19,7 +13,7 @@ export const getUser = async (
 
     let isFollowed;
 
-    if (authenticatedUserId !== null) {
+    if (user && authenticatedUserId !== null) {
       const followers = user.followers.followersList.map((follower: any) => {
         return follower._id.toString();
       });
@@ -28,12 +22,13 @@ export const getUser = async (
 
     if (!user)
       return {
-        statusCode: 403,
+        statusCode: 404,
         success: false,
-        message: "Forbidden",
+        message: "This user doesn't exist.",
         user: null,
         isFollowed: null,
       };
+
     if (user) {
       const userProfileInfo = {
         userId: user.id,
@@ -57,19 +52,13 @@ export const getUser = async (
       };
     }
   } catch (error: any) {
+    console.log(error);
     return {
       statusCode: 500,
       success: false,
-      message: error.message,
+      message: "Something went wrong...",
       user: null,
       isFollowed: false,
     };
   }
-  return {
-    statusCode: 500,
-    success: false,
-    message: "Something went wrong",
-    user: null,
-    isFollowed: false,
-  };
 };
