@@ -5,7 +5,7 @@ import User from "../../../../models/User";
 
 export const getPost = async (postId: string, userId: string | null) => {
   try {
-    if (!postId || !userId)
+    if (!postId)
       return {
         statusCode: 401,
         success: false,
@@ -18,15 +18,17 @@ export const getPost = async (postId: string, userId: string | null) => {
       "id username profilePicture"
     );
 
-    let currentUserFollowing = await User.findById(
-      {
-        _id: userId,
-      },
-      { _id: 0, following: true }
-    );
+    let currentUserFollowing = userId
+      ? await User.findById(
+          {
+            _id: userId,
+          },
+          { _id: 0, following: true }
+        )
+      : null;
 
     const isPostLiked = (): boolean => {
-      const convertedUserId = new Types.ObjectId(userId).toString();
+      const convertedUserId = new Types.ObjectId(userId!).toString();
       if (post.likes.users.includes(convertedUserId)) return true;
       return false;
     };
@@ -48,8 +50,8 @@ export const getPost = async (postId: string, userId: string | null) => {
       likes: post.likes,
       comments: post.comments,
       createdAt: post.createdAt,
-      isLiked: isPostLiked(),
-      isPostOwnerFollowed: isPostOwnerFollowed(),
+      isLiked: userId ? isPostLiked() : false,
+      isPostOwnerFollowed: userId ? isPostOwnerFollowed() : false,
     };
 
     if (!post)
