@@ -30,6 +30,7 @@ export const getFeedPosts = async (
         comments: post.comments,
         createdAt: post.createdAt,
         isLiked: post.likes.users.includes(convertedUserId!.toString()),
+        isPostOwnerFollowed: true,
       };
     });
 

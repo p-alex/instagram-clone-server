@@ -33,7 +33,7 @@ export const followOrUnfollowUser = async (
         success: true,
         message: "User followed successfully",
       };
-    } else {
+    } else if (type === "Unfollow") {
       // update userToFollow's followers list
       await User.findByIdAndUpdate(
         { _id: userId },
