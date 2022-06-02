@@ -1,33 +1,33 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
-import { ApolloServer } from 'apollo-server-express';
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core/dist/plugin/drainHttpServer';
-import express from 'express';
-import http from 'http';
-import typeDefs from './schema';
-import resolvers from './resolvers/index';
-import cors from 'cors';
-import { DocumentNode } from 'graphql';
-import mongoose from 'mongoose';
-import cookieParser from 'cookie-parser';
+import { ApolloServer } from "apollo-server-express";
+import { ApolloServerPluginDrainHttpServer } from "apollo-server-core/dist/plugin/drainHttpServer";
+import express from "express";
+import http from "http";
+import typeDefs from "./schema";
+import resolvers from "./resolvers/index";
+import cors from "cors";
+import { DocumentNode } from "graphql";
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 
 const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   const app = express();
 
-  app.set('trust proxy', 1);
+  app.set("trust proxy", 1);
 
   app.use(
     cors({
       origin:
-        process.env.NODE_ENV === 'production'
-          ? ['https://bubble-social-media-app.vercel.app']
-          : ['http://localhost:3000', 'https://studio.apollographql.com'],
+        process.env.NODE_ENV === "production"
+          ? ["https://bubble.pistolalex.com"]
+          : ["http://localhost:3000", "https://studio.apollographql.com"],
       credentials: true,
     })
   );
 
-  app.use(express.json({ limit: '450kb' }));
-  app.use(express.urlencoded({ limit: '450kb', extended: true }));
+  app.use(express.json({ limit: "450kb" }));
+  app.use(express.urlencoded({ limit: "450kb", extended: true }));
 
   app.use(cookieParser());
 
@@ -46,9 +46,9 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
     app,
     cors: {
       origin:
-        process.env.NODE_ENV === 'production'
-          ? ['https://bubble-social-media-app.vercel.app']
-          : ['http://localhost:3000', 'https://studio.apollographql.com'],
+        process.env.NODE_ENV === "production"
+          ? ["https://bubble.pistolalex.com"]
+          : ["http://localhost:3000", "https://studio.apollographql.com"],
       credentials: true,
     },
   });
@@ -59,7 +59,7 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   console.log(`🚀 Server running at http://localhost:${port}/graphql`);
 
   await mongoose.connect(process.env.MONGO_URI!, () => {
-    console.log('🚀 Database connected');
+    console.log("🚀 Database connected");
   });
 };
 
