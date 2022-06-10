@@ -1,8 +1,9 @@
-import { Response, Request } from 'express';
-import { loginUser } from './controllers/login';
-import { logoutUser } from './controllers/logout';
-import { refreshToken } from './controllers/refreshToken';
-import { registerUser } from './controllers/register';
+import { Response, Request } from "express";
+import { changePassword } from "./controllers/changePassword";
+import { loginUser } from "./controllers/login";
+import { logoutUser } from "./controllers/logout";
+import { refreshToken } from "./controllers/refreshToken";
+import { registerUser } from "./controllers/register";
 
 export type registerUserType = {
   email: string;
@@ -28,11 +29,19 @@ export default {
     { username, password }: loginUserType,
     { res }: { res: Response }
   ) => loginUser({ username, password, res }),
-  logoutUser: (_: unknown, __: unknown, { req, res }: { req: Request; res: Response }) =>
-    logoutUser(req, res),
+  logoutUser: (
+    _: unknown,
+    __: unknown,
+    { req, res }: { req: Request; res: Response }
+  ) => logoutUser(req, res),
   refreshToken: (
     _: unknown,
     __: unknown,
     { req, res }: { req: Request; res: Response }
   ) => refreshToken(req, res),
+  changePassword: (
+    _: unknown,
+    { oldPassword, newPassword }: { oldPassword: string; newPassword: string },
+    { req }: { req: Request }
+  ) => changePassword(oldPassword, newPassword, req),
 };

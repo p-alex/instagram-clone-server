@@ -14,8 +14,14 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     bio: { type: String, default: "" },
     profilePicture: {
-      type: String,
-      default: "/images/default-profile-picture.jpg",
+      fullPicture: {
+        type: String,
+        default: "/images/default-profile-picture.jpg",
+      },
+      smallPicture: {
+        type: String,
+        default: "/images/default-profile-picture.jpg",
+      },
     },
     posts: {
       count: { type: Number, default: 0 },

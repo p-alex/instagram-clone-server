@@ -13,8 +13,13 @@ interface ILoginUserResponse {
   user: {
     id: string | null;
     username: string | null;
+    email: string | null;
+    bio: string | null;
     fullname: string | null;
-    profileImg: string | null;
+    profilePicture: {
+      fullPicture: string;
+      smallPicture: string;
+    } | null;
     hasFollowings: boolean | null;
     accessToken: string | null;
   } | null;
@@ -42,8 +47,13 @@ export const loginUser = async ({
       user: {
         id: user.id!,
         username: user.username,
-        profileImg: user.profilePicture,
+        profilePicture: {
+          fullPicture: user.profilePicture.fullPicture,
+          smallPicture: user.profilePicture.smallPicture,
+        },
         fullname: user.fullname,
+        bio: user.bio,
+        email: user.email,
         hasFollowings: user.following.count > 0,
         accessToken,
       },

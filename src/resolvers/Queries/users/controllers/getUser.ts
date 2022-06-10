@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { IUser, IUserProfileInfo } from "../../../../interfaces";
+import { IUser } from "../../../../interfaces";
 import User from "../../../../models/User";
 export const getUser = async (
   username: string,
@@ -31,7 +31,7 @@ export const getUser = async (
 
     if (user) {
       const userProfileInfo = {
-        userId: user.id,
+        id: user.id,
         profilePicture: user.profilePicture,
         fullname: user.fullname,
         username: user.username,

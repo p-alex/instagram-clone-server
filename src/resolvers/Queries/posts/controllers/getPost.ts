@@ -27,11 +27,12 @@ export const getPost = async (postId: string, userId: string | null) => {
         )
       : null;
 
-    const isPostLiked = (): boolean => {
+    const checkIfPostIsLiked = (): boolean => {
       const convertedUserId = new Types.ObjectId(userId!).toString();
-      if (post.likes.users.includes(convertedUserId)) return true;
-      return false;
+      return post.likes.users.includes(convertedUserId);
     };
+
+    const isPostLiked = checkIfPostIsLiked();
 
     const isPostOwnerFollowed = (): boolean => {
       if (
@@ -47,10 +48,13 @@ export const getPost = async (postId: string, userId: string | null) => {
       user: post.user,
       images: post.images,
       description: post.description,
-      likes: post.likes,
+      likes: {
+        count: post.likes.count,
+        users: [],
+      },
       comments: post.comments,
       createdAt: post.createdAt,
-      isLiked: userId ? isPostLiked() : false,
+      isLiked: userId ? isPostLiked : false,
       isPostOwnerFollowed: userId ? isPostOwnerFollowed() : false,
     };
 

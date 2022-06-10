@@ -25,10 +25,14 @@ export const createPost = async (
     const uploadFullImage = await cloudinary.uploader.upload(image, {
       upload_preset: process.env.CLOUDINARY_POST_IMAGE_UPLOAD_PRESET,
     });
+
     const uploadCroppedImage = await cloudinary.uploader.upload(image, {
       upload_preset: process.env.CLOUDINARY_POST_IMAGE_UPLOAD_PRESET,
       transformation: [{ width: 293, height: 293, crop: "thumb" }],
     });
+
+    if (!uploadFullImage.secure_url || !uploadCroppedImage.secure_url)
+      throw new Error("Couldn't upload image");
 
     // Secure image urls
     const fullImageSecureUrl = uploadFullImage.secure_url;

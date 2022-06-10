@@ -5,7 +5,10 @@ export interface IUser {
   email: string;
   password: string;
   bio: string;
-  profilePicture: string;
+  profilePicture: {
+    fullPicture: string;
+    smallPicture: string;
+  };
   posts: IPosts;
   followers: IFollowers;
   following: IFollowing;

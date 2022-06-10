@@ -8,13 +8,17 @@ const typeDefs = gql`
     email: String!
     password: String!
     bio: String
-    profilePicture: String
+    profilePicture: ProfilePicture
     posts: Posts
     followers: Followers
     following: Following
     gender: String
     createdAt: String
     updatedAt: String
+  }
+  type ProfilePicture {
+    fullPicture: String!
+    smallPicture: String!
   }
   type Followers {
     count: Int!
@@ -86,7 +90,7 @@ const typeDefs = gql`
   type LiteUser {
     id: ID!
     username: String!
-    profilePicture: String
+    profilePicture: ProfilePicture
   }
   type GetUserResponse {
     statusCode: Int!
@@ -97,8 +101,8 @@ const typeDefs = gql`
     hasFollowings: Boolean
   }
   type UserProfileInfo {
-    userId: ID
-    profilePicture: String
+    id: ID
+    profilePicture: ProfilePicture
     fullname: String
     username: String
     bio: String
@@ -127,8 +131,10 @@ const typeDefs = gql`
   type AuthUserObject {
     id: String
     username: String
+    email: String
+    bio: String
     fullname: String
-    profileImg: String
+    profilePicture: ProfilePicture
     hasFollowings: Boolean
     accessToken: String
   }
@@ -178,7 +184,7 @@ const typeDefs = gql`
   type Suggestion {
     id: String!
     username: String!
-    profilePicture: String
+    profilePicture: ProfilePicture
     isFollowed: Boolean
   }
   type GetSuggestionsResponse {
@@ -187,12 +193,29 @@ const typeDefs = gql`
     message: String!
     suggestions: [Suggestion]
   }
+  type ChangeProfilePictureResponse {
+    statusCode: Int!
+    success: Boolean!
+    message: String!
+    newFullPictureUrl: String!
+    newSmallPictureUrl: String!
+  }
+  type RemoveProfilePictureResponse {
+    statusCode: Int!
+    success: Boolean!
+    message: String!
+    newPictureUrl: String!
+  }
   type Query {
     getPosts: GetPostsResponse
     getPost(postId: ID!, userId: String): GetPostResponse
     getFeedPosts(currentPage: Int!, maxPostsPerPage: Int!): GetPostsResponse
     getUser(username: String!, authenticatedUserId: String): GetUserResponse
-    getComments(postId: String!): GetCommentsResponse
+    getComments(
+      postId: String!
+      maxCommentsPerPage: Int!
+      currentPage: Int!
+    ): GetCommentsResponse
     getSuggestions: GetSuggestionsResponse
   }
   type Mutation {
@@ -206,6 +229,7 @@ const typeDefs = gql`
     loginUser(username: String!, password: String!): LoginUserResponse
     logoutUser: DefaultResponse
     refreshToken: RefreshTokenResponse
+    changePassword(oldPassword: String!, newPassword: String!): DefaultResponse
     createPost(
       caption: String
       image: String!
@@ -217,6 +241,13 @@ const typeDefs = gql`
     deleteComment(commentId: String!, postId: String!): DefaultResponse
     likeOrDislikeComment(commentId: String!): DefaultResponse
     followOrUnfollowUser(userId: String!, type: String!): DefaultResponse
+    changeProfilePicture(image: String!): ChangeProfilePictureResponse
+    removeProfilePicture: RemoveProfilePictureResponse
+    editProfile(
+      fullname: String!
+      username: String!
+      bio: String
+    ): DefaultResponse
   }
 `;
 

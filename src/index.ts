@@ -55,12 +55,22 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
 
   const port = process.env.PORT || 5001;
 
-  await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
-  console.log(`🚀 Server running at http://localhost:${port}/graphql`);
-
-  await mongoose.connect(process.env.MONGO_URI!, () => {
-    console.log("🚀 Database connected");
-  });
+  await mongoose.connect(
+    process.env.NODE_ENV === "production"
+      ? process.env.MONGO_URI!
+      : "mongodb://localhost:27017/instagramDB",
+    async () => {
+      console.log(
+        process.env.NODE_ENV === "production"
+          ? "🚀 Production Database connected"
+          : "🚀 Development Database connected"
+      );
+      await new Promise<void>((resolve) =>
+        httpServer.listen({ port }, resolve)
+      );
+      console.log(`🚀 Server running at http://localhost:${port}/graphql`);
+    }
+  );
 };
 
 startApolloServer(typeDefs, resolvers);
