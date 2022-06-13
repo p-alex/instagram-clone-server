@@ -61,6 +61,9 @@ export const loginUserValidation = async ({
     if (!username || !password) throw new Error("Please fill in all fields");
     const user: HydratedDocument<IUser> = await User.findOne({ username });
     if (!user) throw new Error("Invalid username or password");
+    if (user.status === "Pending")
+      throw new Error("Please check your inbox to confirm your email.");
+    if (user.status === "Suspended") throw new Error("You are banned.");
     const isValidPassword = await compare(password, user.password);
     if (!isValidPassword) throw new Error("Invalid username or password");
     return { isValid: true, message: "Valid credentials", user };

@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
 import { changePassword } from "./controllers/changePassword";
+import { confirmEmail } from "./controllers/confirmEmail";
 import { loginUser } from "./controllers/login";
 import { logoutUser } from "./controllers/logout";
 import { refreshToken } from "./controllers/refreshToken";
@@ -24,6 +25,10 @@ export default {
     _: unknown,
     { email, fullname, username, password, confirmPassword }: registerUserType
   ) => registerUser({ email, fullname, username, password, confirmPassword }),
+  confirmEmail: (
+    _: unknown,
+    { confirmationCode }: { confirmationCode: string }
+  ) => confirmEmail(confirmationCode),
   loginUser: (
     _: unknown,
     { username, password }: loginUserType,

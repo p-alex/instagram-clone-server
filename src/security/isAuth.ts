@@ -2,7 +2,7 @@ import { Request } from "express";
 import { verify } from "jsonwebtoken";
 import User from "../models/User";
 import { ForbiddenError } from "apollo-server-core";
-import { HydratedDocument, ObjectId, Types } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 import { IUser } from "../interfaces";
 
 export const isAuth = async (

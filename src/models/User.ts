@@ -2,6 +2,14 @@ import { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
+    status: {
+      type: String,
+      enum: ["Pending", "Active", "Suspended"],
+      default: "Pending",
+    },
+    confirmationCode: {
+      type: String,
+    },
     fullname: { type: String, required: true },
     email: {
       type: String,

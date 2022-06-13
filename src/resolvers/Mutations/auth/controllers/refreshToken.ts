@@ -45,6 +45,13 @@ export const refreshToken = async (
     const user: HydratedDocument<IUser> = await User.findById({
       _id: tokenPayload!.id,
     });
+    if (user.status !== "Active")
+      return {
+        statusCode: 403,
+        success: false,
+        message: "Forbidden",
+        user: null,
+      };
     if (user.refreshToken) {
       // Return new pair of access and refresh tokens
       const newAccessToken = createAccessToken({ id: user.id });

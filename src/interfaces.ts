@@ -1,5 +1,7 @@
 export interface IUser {
   id: string;
+  status: "Pending" | "Active" | "Suspended";
+  confirmationCode: string;
   fullname: string;
   username: string;
   email: string;
