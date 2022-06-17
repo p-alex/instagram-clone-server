@@ -225,8 +225,19 @@ const typeDefs = gql`
       username: String!
       password: String!
       confirmPassword: String!
+      recaptchaToken: String!
     ): RegisterUserResponse
     confirmEmail(confirmationCode: String!): DefaultResponse
+    resetPasswordSendEmail(
+      email: String!
+      recaptchaToken: String!
+    ): DefaultResponse
+    verifyResetPasswordToken(token: String!): DefaultResponse
+    resetPassword(
+      token: String!
+      newPassword: String!
+      confirmNewPassword: String!
+    ): DefaultResponse
     loginUser(username: String!, password: String!): LoginUserResponse
     logoutUser: DefaultResponse
     refreshToken: RefreshTokenResponse

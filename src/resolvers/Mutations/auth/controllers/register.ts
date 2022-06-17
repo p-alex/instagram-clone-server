@@ -21,6 +21,7 @@ export const registerUser = async ({
   username,
   password,
   confirmPassword,
+  recaptchaToken,
 }: registerUserType): Promise<IRegisterUserResponse> => {
   const { isValid, message } = await registerUserValidation({
     fullname,
@@ -28,6 +29,7 @@ export const registerUser = async ({
     username,
     password,
     confirmPassword,
+    recaptchaToken,
   });
   if (!isValid) return { statusCode: 400, success: false, message, user: null };
   try {

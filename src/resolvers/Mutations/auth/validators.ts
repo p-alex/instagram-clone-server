@@ -9,6 +9,7 @@ import {
   isValidPassword,
   isValidUsername,
 } from "../../../utils/register-validation";
+import axios from "axios";
 
 type registerValidationType = {
   isValid: boolean;
@@ -25,6 +26,16 @@ export type validationError = {
   message: string;
 };
 
+export const validateHuman = async (token: string): Promise<boolean> => {
+  if (process.env.NODE_ENV === "development") return true;
+  const secret = process.env.RECAPTCHA_SECRET_KEY!;
+  const humanResponse = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
+  );
+  const data = humanResponse.data;
+  return data.success;
+};
+
 // ------------------------REGISTER VALIDATION------------------------
 export const registerUserValidation = async ({
   fullname,
@@ -32,8 +43,11 @@ export const registerUserValidation = async ({
   username,
   password,
   confirmPassword,
+  recaptchaToken,
 }: registerUserType): Promise<registerValidationType> => {
   try {
+    const isHuman = await validateHuman(recaptchaToken);
+    if (!isHuman) throw new Error("Hello mr. bot");
     if (!fullname || !email || !username || !password || !confirmPassword)
       throw new Error("Please fill in all fields");
     if (!isValidEmail(email)) throw new Error("Invalid email");

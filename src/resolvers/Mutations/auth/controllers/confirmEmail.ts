@@ -11,15 +11,14 @@ export const confirmEmail = async (confirmationCode: string) => {
     if (!user)
       return { statusCode: 404, success: false, message: "User doesn't exist" };
 
-    console.log(user);
-
     user.status = "Active";
-    user.confirmationCode = " ";
+    user.confirmationCode = "";
 
     await user.save();
 
     return { statusCode: 200, success: true, message: "Email confirmed!" };
   } catch (error: any) {
+    console.log(error);
     return {
       statusCode: 500,
       success: false,
