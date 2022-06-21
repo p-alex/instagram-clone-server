@@ -21,7 +21,7 @@ export const editProfile = async (
 
     await user.save();
 
-    return { statusCode: 200, success: false, message: "Profile changed" };
+    return { statusCode: 200, success: true, message: "Profile changed" };
   } catch (error) {
     console.log(error);
     return {
