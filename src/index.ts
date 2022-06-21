@@ -26,8 +26,8 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
     })
   );
 
-  app.use(express.json({ limit: "450kb" }));
-  app.use(express.urlencoded({ limit: "450kb", extended: true }));
+  app.use(express.json({ limit: "650kb" }));
+  app.use(express.urlencoded({ limit: "650kb", extended: true }));
 
   app.use(cookieParser());
 
