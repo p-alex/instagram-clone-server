@@ -11,7 +11,7 @@ const userSchema = new Schema(
       type: String,
       unique: false,
     },
-    fullname: { type: String, required: true },
+    fullname: { type: String, default: "", maxlength: 35 },
     email: {
       type: String,
       required: true,
@@ -19,7 +19,13 @@ const userSchema = new Schema(
       trim: true,
       unique: true,
     },
-    username: { type: String, required: true, unique: true },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      maxLength: 16,
+    },
     password: { type: String, required: true },
     bio: { type: String, default: "" },
     profilePicture: {

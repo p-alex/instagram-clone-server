@@ -11,7 +11,6 @@ import { verifyResetPasswordToken } from "./controllers/verifyResetPasswordToken
 
 export type registerUserType = {
   email: string;
-  fullname: string;
   username: string;
   password: string;
   confirmPassword: string;
@@ -29,7 +28,6 @@ export default {
     _: unknown,
     {
       email,
-      fullname,
       username,
       password,
       confirmPassword,
@@ -38,7 +36,6 @@ export default {
   ) =>
     registerUser({
       email,
-      fullname,
       username,
       password,
       confirmPassword,

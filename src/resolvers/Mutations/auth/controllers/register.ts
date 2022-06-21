@@ -16,7 +16,6 @@ interface IRegisterUserResponse {
 }
 
 export const registerUser = async ({
-  fullname,
   email,
   username,
   password,
@@ -24,7 +23,6 @@ export const registerUser = async ({
   recaptchaToken,
 }: registerUserType): Promise<IRegisterUserResponse> => {
   const { isValid, message } = await registerUserValidation({
-    fullname,
     email,
     username,
     password,
@@ -60,7 +58,6 @@ export const registerUser = async ({
     }
 
     const newUser = new User({
-      fullname,
       email,
       username,
       password: hashedPassword,

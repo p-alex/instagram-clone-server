@@ -5,7 +5,6 @@ import { IUser } from "../../../interfaces";
 import User from "../../../models/User";
 import {
   isValidEmail,
-  isValidFullname,
   isValidPassword,
   isValidUsername,
 } from "../../../utils/register-validation";
@@ -38,7 +37,6 @@ export const validateHuman = async (token: string): Promise<boolean> => {
 
 // ------------------------REGISTER VALIDATION------------------------
 export const registerUserValidation = async ({
-  fullname,
   email,
   username,
   password,
@@ -48,7 +46,6 @@ export const registerUserValidation = async ({
   try {
     console.log(`
       ======Register validation=======
-      fullname: ${fullname}
       email: ${email}
       username: ${username}
       password: ${password}
@@ -59,7 +56,7 @@ export const registerUserValidation = async ({
     const isHuman = await validateHuman(recaptchaToken);
     console.log("isHuman: ", isHuman);
     if (!isHuman) throw new Error("Hello mr. bot");
-    if (!fullname || !email || !username || !password || !confirmPassword)
+    if (!email || !username || !password || !confirmPassword)
       throw new Error("Please fill in all fields");
     if (!isValidEmail(email)) throw new Error("Invalid email");
     const user = await User.findOne({ email });
@@ -67,7 +64,6 @@ export const registerUserValidation = async ({
     const isUniqueUsername = await User.findOne({ username });
     if (isUniqueUsername)
       throw new Error("A user with that username already exists");
-    if (!isValidFullname(fullname)) throw new Error("Invalid fullname");
     if (!isValidUsername(username)) throw new Error("Invalid username");
     if (!isValidPassword(password)) throw new Error("Invalid password");
     if (password !== confirmPassword) throw new Error("Passwords must match");
