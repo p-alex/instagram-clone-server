@@ -29,11 +29,15 @@ export const getSuggestions = async (req: Request) => {
 
     // Making my profile appear first in the suggestions :)))))
     // After that i sort every other suggestion by date (newest to oldest)
-    if (alexeyroSuggestion && alexeyroSuggestion.id !== userId) {
+    if (alexeyroSuggestion) {
       const updatedSuggestions = suggestions
         .filter((suggestion) => suggestion.username !== "alexeyro")
         .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
-      updatedSuggestions.unshift(alexeyroSuggestion);
+      if (
+        alexeyroSuggestion.id !== userId &&
+        !user?.following.followingList.includes(alexeyroSuggestion.id)
+      )
+        updatedSuggestions.unshift(alexeyroSuggestion);
       suggestions = updatedSuggestions;
     }
 
