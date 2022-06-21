@@ -27,12 +27,12 @@ export type validationError = {
 };
 
 export const validateHuman = async (token: string): Promise<boolean> => {
-  if (process.env.NODE_ENV === "development") return true;
   const secret = process.env.RECAPTCHA_SECRET_KEY!;
   const humanResponse = await axios.post(
     `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
   );
   const data = humanResponse.data;
+  console.log(data);
   return data.success;
 };
 
@@ -46,7 +46,18 @@ export const registerUserValidation = async ({
   recaptchaToken,
 }: registerUserType): Promise<registerValidationType> => {
   try {
+    console.log(`
+      ======Register validation=======
+      fullname: ${fullname}
+      email: ${email}
+      username: ${username}
+      password: ${password}
+      confirmPassword: ${confirmPassword}
+      recaptchaToken: ${recaptchaToken}
+      ======Register validation=======
+    `);
     const isHuman = await validateHuman(recaptchaToken);
+    console.log("isHuman: ", isHuman);
     if (!isHuman) throw new Error("Hello mr. bot");
     if (!fullname || !email || !username || !password || !confirmPassword)
       throw new Error("Please fill in all fields");

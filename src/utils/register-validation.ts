@@ -4,18 +4,22 @@ const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9_]{3,20}$/g;
 const FULLNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9 ]{1,35}$/g;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%?]).{8,24}$/g;
 
-export const isValidEmail = (email: string): boolean => {
-  return EMAIL_REGEX.test(email);
+export const isValidEmail = async (email: string): Promise<boolean> => {
+  const isValidEmail = await EMAIL_REGEX.test(email);
+  return isValidEmail;
 };
 
-export const isValidFullname = (fullname: string): boolean => {
-  return FULLNAME_REGEX.test(fullname);
+export const isValidFullname = async (fullname: string): Promise<boolean> => {
+  const isValidFullName = await FULLNAME_REGEX.test(fullname);
+  return isValidFullName;
 };
 
-export const isValidUsername = (username: string): boolean => {
-  return USERNAME_REGEX.test(username);
+export const isValidUsername = async (username: string): Promise<boolean> => {
+  const isValidUsername = await USERNAME_REGEX.test(username);
+  return isValidUsername;
 };
 
-export const isValidPassword = (password: string): boolean => {
-  return PASSWORD_REGEX.test(password);
+export const isValidPassword = async (password: string): Promise<boolean> => {
+  const isValidPassword = await PASSWORD_REGEX.test(password);
+  return isValidPassword;
 };
