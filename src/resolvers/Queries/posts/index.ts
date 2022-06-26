@@ -1,6 +1,7 @@
 import { Request } from "express";
 import { getFeedPosts } from "./controllers/getFeedPosts";
 import { getPost } from "./controllers/getPost";
+import { getMorePostsFromUser } from "./controllers/getMorePostsFromUser";
 
 export default {
   getPost: (
@@ -15,4 +16,8 @@ export default {
     }: { currentPage: number; maxPostsPerPage: number },
     { req }: { req: Request }
   ) => getFeedPosts(currentPage, maxPostsPerPage, req),
+  getMorePostsFromUser: (
+    _: unknown,
+    { userId, currentPostId }: { userId: string; currentPostId: string }
+  ) => getMorePostsFromUser(userId, currentPostId),
 };

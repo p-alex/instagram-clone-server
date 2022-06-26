@@ -209,6 +209,10 @@ const typeDefs = gql`
   type Query {
     getPosts: GetPostsResponse
     getPost(postId: ID!, userId: String): GetPostResponse
+    getMorePostsFromUser(
+      userId: String!
+      currentPostId: String!
+    ): GetPostsResponse
     getFeedPosts(currentPage: Int!, maxPostsPerPage: Int!): GetPostsResponse
     getUser(username: String!, authenticatedUserId: String): GetUserResponse
     getComments(
