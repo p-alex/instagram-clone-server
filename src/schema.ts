@@ -66,26 +66,12 @@ const typeDefs = gql`
     user: LiteUser
     comment: String
     likes: Likes
-    replies: Replies
     createdAt: String
     updatedAt: String
   }
   type Likes {
     count: Int!
     users: [String]
-  }
-  type Replies {
-    count: Int!
-    userReplies: [String]
-  }
-  type Reply {
-    parentCommentId: String!
-    user: LiteUser!
-    repliedTo: String!
-    reply: String!
-    likes: Likes!
-    createdAt: String
-    updatedAt: String
   }
   type LiteUser {
     id: ID!
@@ -206,6 +192,18 @@ const typeDefs = gql`
     message: String!
     newPictureUrl: String!
   }
+  type GetUserFollowers {
+    statusCode: Int!
+    success: Boolean!
+    message: String!
+    users: [UserFollowers]
+  }
+  type UserFollowers {
+    id: String
+    username: String
+    profilePicture: String
+    isFollowed: Boolean
+  }
   type Query {
     getPosts: GetPostsResponse
     getPost(postId: ID!, userId: String): GetPostResponse
@@ -215,6 +213,12 @@ const typeDefs = gql`
     ): GetPostsResponse
     getFeedPosts(currentPage: Int!, maxPostsPerPage: Int!): GetPostsResponse
     getUser(username: String!, authenticatedUserId: String): GetUserResponse
+    getUserFollowers(
+      userId: String!
+      type: String!
+      currentPage: Int!
+      maxUsersPerPage: Int!
+    ): GetUserFollowers
     getComments(
       postId: String!
       maxCommentsPerPage: Int!

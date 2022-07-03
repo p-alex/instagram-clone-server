@@ -14,10 +14,10 @@ export const getUser = async (
     let isFollowed;
 
     if (user && authenticatedUserId !== null) {
-      const followers = user.followers.followersList.map((follower: any) => {
-        return follower._id.toString();
+      const followers = user.followers.followersList.filter((follower: any) => {
+        return follower._id.toString() === authenticatedUserId;
       });
-      isFollowed = followers.includes(authenticatedUserId);
+      isFollowed = followers.length > 0;
     }
 
     if (!user)
