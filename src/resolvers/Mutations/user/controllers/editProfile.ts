@@ -17,8 +17,6 @@ export const editProfile = async (
     user.username = username;
     user.bio = replaceBlankLines(bio);
 
-    console.log(replaceBlankLines(bio));
-
     await user.save();
 
     return { statusCode: 200, success: true, message: "Profile changed" };

@@ -15,8 +15,6 @@ export const resetPasswordSendEmail = async (
   try {
     const isHuman = await validateHuman(recaptchaToken);
 
-    console.log(`isHuman: ${isHuman}`);
-
     if (!isHuman)
       return { statusCode: 402, success: false, message: "You are a bot." };
     if (!email)

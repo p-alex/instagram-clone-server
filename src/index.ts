@@ -14,8 +14,6 @@ import cookieParser from "cookie-parser";
 const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   const app = express();
 
-  app.set("trust proxy", 1);
-
   app.use(
     cors({
       origin:
@@ -62,7 +60,7 @@ const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
     async () => {
       console.log(
         process.env.NODE_ENV === "production"
-          ? "🚀 Production Database connected"
+          ? "🚀 Database connected"
           : "🚀 Development Database connected"
       );
       await new Promise<void>((resolve) =>

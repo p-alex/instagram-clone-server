@@ -14,7 +14,7 @@ export const emailConfirmationTemplate = (
     subject: "Bubble | Email confirmation.",
     text: "Confirm your email",
     html: `<div style="text-align:center;position:relative; width:400px;padding:40px;margin:0 auto;background-color:white;font-family:Helvetica, sans-serif; border:solid silver 1px; border-radius: 10px">
-    <h1 style="color: #4f518c;font-size: 34px;">Bubble</h1>
+    <h1 style="color: #4f518c;font-size: 45px;">Bubble</h1>
 
     <h2>Email Confirmation</h2>
 
@@ -42,7 +42,7 @@ export const forgetPasswordTemplate = (token: string): ITemplate => {
     subject: "Bubble | Reset password request.",
     text: "Request to reset your account's password.",
     html: `<div style="text-align:center;position:relative; width:400px;padding:40px;margin:0 auto;background-color:white;color:white;font-family:Helvetica, sans-serif; border:solid silver 1px; border-radius: 10px">
-    <h1 style="color: #4f518c;font-size: 34px;">Bubble</h1>
+    <h1 style="color: #4f518c;font-size: 45px;">Bubble</h1>
 
     <h2>Reset your password</h2>
 

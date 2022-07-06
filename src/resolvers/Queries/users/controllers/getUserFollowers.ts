@@ -21,8 +21,6 @@ export const getUserFollowers = async (
 ) => {
   const { isAuthorized, message, user } = await isAuth(req);
 
-  console.log(userId);
-
   if (!isAuthorized)
     return { statusCode: 401, success: false, message, followers: null };
 
@@ -72,8 +70,6 @@ export const getUserFollowers = async (
     ];
 
     const response: IAggregation[] = await User.aggregate(pipeline);
-
-    console.log(response[0].users);
 
     const users = response[0].users;
 

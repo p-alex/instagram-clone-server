@@ -44,17 +44,7 @@ export const registerUserValidation = async ({
   recaptchaToken,
 }: registerUserType): Promise<registerValidationType> => {
   try {
-    console.log(`
-      ======Register validation=======
-      email: ${email}
-      username: ${username}
-      password: ${password}
-      confirmPassword: ${confirmPassword}
-      recaptchaToken: ${recaptchaToken}
-      ======Register validation=======
-    `);
     const isHuman = await validateHuman(recaptchaToken);
-    console.log("isHuman: ", isHuman);
     if (!isHuman) throw new Error("Hello mr. bot");
     if (!email || !username || !password || !confirmPassword)
       throw new Error("Please fill in all fields");
