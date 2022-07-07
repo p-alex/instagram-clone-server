@@ -1,6 +1,7 @@
 import { Request } from "express";
 import { getUser } from "./controllers/getUser";
 import { getUserFollowers } from "./controllers/getUserFollowers";
+import { searchUsers } from "./controllers/searchUsers";
 
 export default {
   getUser: (
@@ -26,4 +27,5 @@ export default {
     },
     { req }: { req: Request }
   ) => getUserFollowers(userId, type, currentPage, maxUsersPerPage, req),
+  searchUsers: (_: unknown, { query }: { query: string }) => searchUsers(query),
 };

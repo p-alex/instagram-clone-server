@@ -204,6 +204,17 @@ const typeDefs = gql`
     profilePicture: String
     isFollowed: Boolean
   }
+  type SearchResults {
+    id: String!
+    username: String!
+    profilePicture: String!
+  }
+  type SearchUsersResponse {
+    statusCode: Int!
+    success: Boolean!
+    message: String!
+    results: [SearchResults]
+  }
   type Query {
     getPosts: GetPostsResponse
     getPost(postId: ID!, userId: String): GetPostResponse
@@ -225,6 +236,7 @@ const typeDefs = gql`
       currentPage: Int!
     ): GetCommentsResponse
     getSuggestions: GetSuggestionsResponse
+    searchUsers(query: String!): SearchUsersResponse
   }
   type Mutation {
     registerUser(
