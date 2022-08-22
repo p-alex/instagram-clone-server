@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
-import { verify } from "jsonwebtoken";
-import { HydratedDocument } from "mongoose";
-import { IUser } from "../../../../interfaces";
-import User from "../../../../models/User";
+import { Request, Response } from 'express';
+import { verify } from 'jsonwebtoken';
+import { HydratedDocument } from 'mongoose';
+import { IUser } from '../../../../interfaces';
+import User from '../../../../models/User';
 import {
   createAccessToken,
   createRefreshToken,
   setRefreshTokenCookie,
-} from "../../../../security/jwt";
+} from '../../../../security/jwt';
 
 interface IRefreshTokenResponse {
   statusCode: number;
@@ -35,21 +35,20 @@ export const refreshToken = async (
   try {
     // Check for the refresh token in the cookies
     const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) throw new Error("There is no token in the cookies");
+    if (!refreshToken) throw new Error('There is no token in the cookies');
     // Verify refresh token
-    const tokenPayload = verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET!
-    ) as { id: string } | undefined;
+    const tokenPayload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!) as
+      | { id: string }
+      | undefined;
     // Check if there is a user with the id coming from the refresh token
     const user: HydratedDocument<IUser> = await User.findById({
       _id: tokenPayload!.id,
     });
-    if (user.status !== "Active")
+    if (user.status !== 'Active')
       return {
         statusCode: 403,
         success: false,
-        message: "Forbidden",
+        message: 'Forbidden',
         user: null,
       };
     if (user.refreshToken) {
@@ -58,17 +57,15 @@ export const refreshToken = async (
       const newRefreshToken = createRefreshToken({ id: user.id });
       // Add new refresh token to database
       const isTokenInArray = user.refreshToken.includes(refreshToken);
-      if (!isTokenInArray) throw new Error("Invalid token");
-      user.refreshToken = user.refreshToken.filter(
-        (token) => token !== refreshToken
-      );
+      if (!isTokenInArray) throw new Error('Invalid token');
+      user.refreshToken = user.refreshToken.filter((token) => token !== refreshToken);
       user.refreshToken = [...user.refreshToken, newRefreshToken];
       await user.save();
       setRefreshTokenCookie(res, newRefreshToken);
       return {
         statusCode: 200,
         success: true,
-        message: "Sent new access token successfully",
+        message: 'Sent new access token successfully',
         user: {
           id: user.id,
           username: user.username,
@@ -84,14 +81,14 @@ export const refreshToken = async (
         },
       };
     }
-    throw new Error("There is no user with the id from the token");
+    throw new Error('There is no user with the id from the token');
   } catch (err: any) {
     console.log(err.message);
-    res.cookie("refreshToken", "", {
+    res.cookie('refreshToken', '', {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
-      path: "/",
+      sameSite: 'none',
+      path: '/',
       maxAge: 0,
     });
     return {
