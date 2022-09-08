@@ -1,4 +1,4 @@
 export const clientBaseUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://bubble.pistolalex.com"
-    : "http://localhost:3000";
+  process.env.NODE_ENV === 'production'
+    ? 'https://bubble-social-media-app.vercel.app'
+    : 'http://localhost:3000';
