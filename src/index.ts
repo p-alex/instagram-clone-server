@@ -11,7 +11,6 @@ import { DocumentNode } from 'graphql';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-// ping
 
 const startApolloServer = async (typeDefs: DocumentNode, resolvers: any) => {
   const app = express();
