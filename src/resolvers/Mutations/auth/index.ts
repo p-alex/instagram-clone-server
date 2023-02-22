@@ -1,13 +1,13 @@
-import { Response, Request } from "express";
-import { changePassword } from "./controllers/changePassword";
-import { confirmEmail } from "./controllers/confirmEmail";
-import { loginUser } from "./controllers/login";
-import { logoutUser } from "./controllers/logout";
-import { refreshToken } from "./controllers/refreshToken";
-import { registerUser } from "./controllers/register";
-import { resetPassword } from "./controllers/resetPassword";
-import { resetPasswordSendEmail } from "./controllers/resetPasswordSendEmail";
-import { verifyResetPasswordToken } from "./controllers/verifyResetPasswordToken";
+import { Response, Request } from 'express';
+import { changePassword } from './controllers/changePassword';
+import { confirmEmail } from './controllers/confirmEmail';
+import { loginUser } from './controllers/login';
+import { logoutUser } from './controllers/logout';
+import { refreshToken } from './controllers/refreshToken';
+import { registerUser } from './controllers/register';
+import { resetPassword } from './controllers/resetPassword';
+import { resetPasswordSendEmail } from './controllers/resetPasswordSendEmail';
+import { verifyResetPasswordToken } from './controllers/verifyResetPasswordToken';
 
 export type registerUserType = {
   email: string;
@@ -20,19 +20,14 @@ export type registerUserType = {
 export type loginUserType = {
   username: string;
   password: string;
+  recaptchaToken: string;
   res?: Response;
 };
 
 export default {
   registerUser: (
     _: unknown,
-    {
-      email,
-      username,
-      password,
-      confirmPassword,
-      recaptchaToken,
-    }: registerUserType
+    { email, username, password, confirmPassword, recaptchaToken }: registerUserType
   ) =>
     registerUser({
       email,
@@ -41,10 +36,8 @@ export default {
       confirmPassword,
       recaptchaToken,
     }),
-  confirmEmail: (
-    _: unknown,
-    { confirmationCode }: { confirmationCode: string }
-  ) => confirmEmail(confirmationCode),
+  confirmEmail: (_: unknown, { confirmationCode }: { confirmationCode: string }) =>
+    confirmEmail(confirmationCode),
   resetPasswordSendEmail: (
     _: unknown,
     { email, recaptchaToken }: { email: string; recaptchaToken: string }
@@ -61,14 +54,11 @@ export default {
   ) => resetPassword(token, newPassword, confirmNewPassword),
   loginUser: (
     _: unknown,
-    { username, password }: loginUserType,
+    { username, password, recaptchaToken }: loginUserType,
     { res }: { res: Response }
-  ) => loginUser({ username, password, res }),
-  logoutUser: (
-    _: unknown,
-    __: unknown,
-    { req, res }: { req: Request; res: Response }
-  ) => logoutUser(req, res),
+  ) => loginUser({ username, password, recaptchaToken, res }),
+  logoutUser: (_: unknown, __: unknown, { req, res }: { req: Request; res: Response }) =>
+    logoutUser(req, res),
   refreshToken: (
     _: unknown,
     __: unknown,

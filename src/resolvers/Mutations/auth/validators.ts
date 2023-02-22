@@ -1,14 +1,14 @@
-import { compare } from "bcryptjs";
-import { HydratedDocument } from "mongoose";
-import { loginUserType, registerUserType } from ".";
-import { IUser } from "../../../interfaces";
-import User from "../../../models/User";
+import { compare } from 'bcryptjs';
+import { HydratedDocument } from 'mongoose';
+import { loginUserType, registerUserType } from '.';
+import { IUser } from '../../../interfaces';
+import User from '../../../models/User';
 import {
   isValidEmail,
   isValidPassword,
   isValidUsername,
-} from "../../../utils/register-validation";
-import axios from "axios";
+} from '../../../utils/register-validation';
+import axios from 'axios';
 
 type registerValidationType = {
   isValid: boolean;
@@ -31,7 +31,6 @@ export const validateHuman = async (token: string): Promise<boolean> => {
     `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
   );
   const data = humanResponse.data;
-  console.log(data);
   return data.success;
 };
 
@@ -45,19 +44,18 @@ export const registerUserValidation = async ({
 }: registerUserType): Promise<registerValidationType> => {
   try {
     const isHuman = await validateHuman(recaptchaToken);
-    if (!isHuman) throw new Error("Hello mr. bot");
+    if (!isHuman) throw new Error('Hello mr. bot');
     if (!email || !username || !password || !confirmPassword)
-      throw new Error("Please fill in all fields");
-    if (!isValidEmail(email)) throw new Error("Invalid email");
+      throw new Error('Please fill in all fields');
+    if (!isValidEmail(email)) throw new Error('Invalid email');
     const user = await User.findOne({ email });
-    if (user) throw new Error("A user with that email already exists");
+    if (user) throw new Error('A user with that email already exists');
     const isUniqueUsername = await User.findOne({ username });
-    if (isUniqueUsername)
-      throw new Error("A user with that username already exists");
-    if (!isValidUsername(username)) throw new Error("Invalid username");
-    if (!isValidPassword(password)) throw new Error("Invalid password");
-    if (password !== confirmPassword) throw new Error("Passwords must match");
-    return { isValid: true, message: "Success!" };
+    if (isUniqueUsername) throw new Error('A user with that username already exists');
+    if (!isValidUsername(username)) throw new Error('Invalid username');
+    if (!isValidPassword(password)) throw new Error('Invalid password');
+    if (password !== confirmPassword) throw new Error('Passwords must match');
+    return { isValid: true, message: 'Success!' };
   } catch (err: any) {
     return { isValid: false, message: err.message };
   }
@@ -67,17 +65,20 @@ export const registerUserValidation = async ({
 export const loginUserValidation = async ({
   username,
   password,
+  recaptchaToken,
 }: loginUserType): Promise<loginValidationType> => {
   try {
-    if (!username || !password) throw new Error("Please fill in all fields");
+    const isHuman = await validateHuman(recaptchaToken);
+    if (!isHuman) throw new Error('Hello mr. bot');
+    if (!username || !password) throw new Error('Please fill in all fields');
     const user: HydratedDocument<IUser> = await User.findOne({ username });
-    if (!user) throw new Error("Invalid username or password");
-    if (user.status === "Pending")
-      throw new Error("Please check your inbox to confirm your email.");
-    if (user.status === "Suspended") throw new Error("You are banned.");
+    if (!user) throw new Error('Invalid username or password');
+    if (user.status === 'Pending')
+      throw new Error('Please check your inbox to confirm your email.');
+    if (user.status === 'Suspended') throw new Error('You are banned.');
     const isValidPassword = await compare(password, user.password);
-    if (!isValidPassword) throw new Error("Invalid username or password");
-    return { isValid: true, message: "Valid credentials", user };
+    if (!isValidPassword) throw new Error('Invalid username or password');
+    return { isValid: true, message: 'Valid credentials', user };
   } catch (err: any) {
     return { isValid: false, message: err.message, user: null };
   }

@@ -1,10 +1,10 @@
-import { loginUserType } from "..";
+import { loginUserType } from '..';
 import {
   createAccessToken,
   createRefreshToken,
   setRefreshTokenCookie,
-} from "../../../../security/jwt";
-import { loginUserValidation } from "../validators";
+} from '../../../../security/jwt';
+import { loginUserValidation } from '../validators';
 
 interface ILoginUserResponse {
   statusCode: number;
@@ -28,11 +28,13 @@ interface ILoginUserResponse {
 export const loginUser = async ({
   username,
   password,
+  recaptchaToken,
   res,
 }: loginUserType): Promise<ILoginUserResponse> => {
   const { isValid, message, user } = await loginUserValidation({
     username,
     password,
+    recaptchaToken,
   });
   if (isValid && user?.refreshToken) {
     const accessToken = createAccessToken({ id: user.id });

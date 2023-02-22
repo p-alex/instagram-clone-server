@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-express";
+import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
   type User {
@@ -218,10 +218,7 @@ const typeDefs = gql`
   type Query {
     getPosts: GetPostsResponse
     getPost(postId: ID!, userId: String): GetPostResponse
-    getMorePostsFromUser(
-      userId: String!
-      currentPostId: String!
-    ): GetPostsResponse
+    getMorePostsFromUser(userId: String!, currentPostId: String!): GetPostsResponse
     getFeedPosts(currentPage: Int!, maxPostsPerPage: Int!): GetPostsResponse
     getUser(username: String!, authenticatedUserId: String): GetUserResponse
     getUserFollowers(
@@ -247,25 +244,22 @@ const typeDefs = gql`
       recaptchaToken: String!
     ): RegisterUserResponse
     confirmEmail(confirmationCode: String!): DefaultResponse
-    resetPasswordSendEmail(
-      email: String!
-      recaptchaToken: String!
-    ): DefaultResponse
+    resetPasswordSendEmail(email: String!, recaptchaToken: String!): DefaultResponse
     verifyResetPasswordToken(token: String!): DefaultResponse
     resetPassword(
       token: String!
       newPassword: String!
       confirmNewPassword: String!
     ): DefaultResponse
-    loginUser(username: String!, password: String!): LoginUserResponse
+    loginUser(
+      username: String!
+      password: String!
+      recaptchaToken: String!
+    ): LoginUserResponse
     logoutUser: DefaultResponse
     refreshToken: RefreshTokenResponse
     changePassword(oldPassword: String!, newPassword: String!): DefaultResponse
-    createPost(
-      caption: String
-      image: String!
-      aspectRatio: Float!
-    ): CreatePostResponse
+    createPost(caption: String, image: String!, aspectRatio: Float!): CreatePostResponse
     likeOrDislikePost(postId: String!): DefaultResponse
     deletePost(postId: String!): DefaultResponse
     addComment(comment: String!, postId: String!): AddCommentResponse
@@ -274,11 +268,7 @@ const typeDefs = gql`
     followOrUnfollowUser(userId: String!, type: String!): DefaultResponse
     changeProfilePicture(image: String!): ChangeProfilePictureResponse
     removeProfilePicture: RemoveProfilePictureResponse
-    editProfile(
-      fullname: String!
-      username: String!
-      bio: String
-    ): DefaultResponse
+    editProfile(fullname: String!, username: String!, bio: String): DefaultResponse
   }
 `;
 
